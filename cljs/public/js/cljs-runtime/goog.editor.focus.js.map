@@ -1,0 +1,9 @@
+{
+"version":3,
+"file":"goog.editor.focus.js",
+"lineCount":7,
+"mappings":"AAUAA,IAAKC,CAAAA,OAAL,CAAa,mBAAb,CAAA;AAEAD,IAAKE,CAAAA,OAAL,CAAa,oBAAb,CAAA;AAQAF,IAAKG,CAAAA,MAAOC,CAAAA,KAAMC,CAAAA,eAAlB,GAAoCC,QAAQ,CAACC,SAAD,CAAY;AAEtDA,WAAUH,CAAAA,KAAV,EAAA;AACAJ,MAAKQ,CAAAA,GAAIC,CAAAA,SAAUC,CAAAA,iBAAnB,CAAqCH,SAArC,EAAgDA,SAAUI,CAAAA,KAAMC,CAAAA,MAAhE,CAAA;AAHsD,CAAxD;;",
+"sources":["goog/editor/focus.js"],
+"sourcesContent":["/**\n * @license\n * Copyright The Closure Library Authors.\n * SPDX-License-Identifier: Apache-2.0\n */\n\n/**\n * @fileoverview Utilties to handle focusing related to rich text editing.\n */\n\ngoog.provide('goog.editor.focus');\n\ngoog.require('goog.dom.selection');\n\n\n/**\n * Change focus to the given input field and set cursor to end of current text.\n * @param {Element} inputElem Input DOM element.\n * @suppress {strictMissingProperties} Part of the go/strict_warnings_migration\n */\ngoog.editor.focus.focusInputField = function(inputElem) {\n  'use strict';\n  inputElem.focus();\n  goog.dom.selection.setCursorPosition(inputElem, inputElem.value.length);\n};\n"],
+"names":["goog","provide","require","editor","focus","focusInputField","goog.editor.focus.focusInputField","inputElem","dom","selection","setCursorPosition","value","length"]
+}

@@ -1,0 +1,1 @@
+{"version":3,"sources":["tiltontec/model/macros.cljc"],"mappings":"","names":[],"sourcesContent":["(ns tiltontec.model.macros\n  (:require \n   [tiltontec.cell.base :refer [ia-type]]))\n\n(defmacro pme [& mas]\n  `(when true ;;  (= :login (:name (deref ~'me)))\n     (println (ia-type ~'me)\n     \t(:tag (deref ~'me))\n       (:name (deref ~'me)) ~@mas)))\n"]}
