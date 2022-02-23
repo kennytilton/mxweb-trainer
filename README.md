@@ -1,8 +1,9 @@
 ![Matrix cell culture](images/mx-banner-red.jpg)
 
-Welcome to the learn-by-doing repo for Matrix, the generic, point reactive engine that began as Common Lisp [Cells](https://github.com/kennytilton/cells) twenty-five years ago. Gasp.
+# mxWeb Trainer
+Welcome to `mxweb-trainer`, the learn-by-doing repo for Matrix, in turn the generic, point-reactive engine that began as Common Lisp [Cells](https://github.com/kennytilton/cells) twenty-five years ago. Gasp.
 
-
+The #1 use case for automatic state management is building GUI interfaces, so our Matrix trainer is also a trainer in using mxWeb.
 
 # Matrix from 30,000 feet
 With the Matrix library, global variables or individual properties of objects can be expressed as so-called *cells*. Cells come in two flavors. *Formulaic* cells use standard HLL code to compute their value from other cells. For a dead simple example, the *TodoMVC* rules mandate we apply the "completed" class to to-do LIs if and only if the user has marked them as, well, completed:
