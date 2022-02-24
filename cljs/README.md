@@ -1,3 +1,5 @@
+![Matrix cell culture](../images/mx-banner-red.jpg)
+
 # mxWeb Trainer -- CLJS
 
 This is the CLJS version of the mxWeb Trainer. We will have a JS version RSN.
