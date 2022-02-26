@@ -1,6 +1,5 @@
-(ns mxweb-trainer.mission.just-html
-  (:require [goog.dom :as dom]
-            [clojure.string :as str]
+(ns mxweb-trainer.mission.cells-intro
+  (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.model.core
              :refer [matrix mx-par mget mget mset! mset!
@@ -14,26 +13,16 @@
             [mxweb-trainer.reusable.style :as style]
             ))
 
-(declare its-just-html)
+
+(declare counter-cells)
 
 (defn mission-factory []
-  {:id :just-html
-   :objective "In this mission, we discover that<br>mxWeb is just reactive HTML/CSS."
-   :source-path "mxweb-trainer.mission/just-html"
-   :content its-just-html})
+  {:id :cells-intro
+   :objective "Next we do the \"Hello, world!\" of Matrix reactivity."
+   :source-path "mxweb-trainer.mission/cells-intro"
+   :content counter-cells})
 
-(defn mi-dum-dum []
-  (div {} {:name    :dum-dum
-           :success (cI false)}
-    (when (md/mget me :success)
-      (figure {#_#_:style "background:red"}
-        (audio {:src      "/audio/mi-dum-dum.mp3"
-                :controls true
-                :loop     true
-                :onplay   (fn [e] (prn :onplay-sees e))
-                :autoplay true})))))
-
-(defn its-just-html []
+(defn counter-cells []
   (div {:style (str "display:flex"
                  ";flex-direction:column"
                  ";align-items:center"
@@ -42,11 +31,23 @@
                  ";padding:9px"
                  ";background:pink")}
     (span {:style "font-size:3em"}
-      "Hello, Matrix")
+      "Hello, Cells")
 
     (span "The time is now....")
-    (timer/clock)
-    (mi-dum-dum)
+
+    #_ (div {:style   (str "color:red"
+                     ";font-size: 64px;"
+                     ";line-height: 1.2em;")
+
+          :content (cF (-> (mget me :time-now)
+                         .toTimeString
+                         (str/split " ")
+                         first))}
+      ;; The second map is for custom properties that DIVs know nothing about.
+      ;; With these, we can get more re-use out of DIVs, because we do not need
+      ;; to get into OO issues forever subclassing.
+      {:time-now   (cI (js/Date.))})
+
 
     ;;
     ;; ----------------------------------------------------------------

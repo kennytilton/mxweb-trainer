@@ -1,4 +1,4 @@
-/public/js
+**/public/js
 /node_modules
 /target
 /yarn.lock

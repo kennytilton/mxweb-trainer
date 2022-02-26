@@ -1,0 +1,11 @@
+(button {:style nice-button-style
+             :onclick (helper/find-and-set :dum-dum :success true)}
+      "Claim HTML")
+
+road map:
+
+introduce nice way of building style string from CLJ map
+make style formulaic
+mxStyle
+
+bring in Material Design material.io once raw CSS gets old

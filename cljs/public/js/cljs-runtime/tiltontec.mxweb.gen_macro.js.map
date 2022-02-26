@@ -1,1 +1,0 @@
-{"version":3,"sources":["tiltontec/mxweb/gen_macro.cljs"],"mappings":"","names":[],"sourcesContent":["(ns tiltontec.mxweb.gen-macro\n  (:refer-clojure :exclude [map meta time])\n  (:require-macros [tiltontec.mxweb.gen-macro]))\n"]}
