@@ -10,7 +10,7 @@
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [tiltontec.mxweb.html :refer [tag-dom-create]]
-            [mxweb-trainer.mission.just-html :as ex1]
+            [mxweb-trainer.mission.its-just-html :as ex1]
             [mxweb-trainer.mission-control :as mc]))
 
 (enable-console-print!)
