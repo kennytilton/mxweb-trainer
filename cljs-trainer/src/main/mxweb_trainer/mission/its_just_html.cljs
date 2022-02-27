@@ -19,7 +19,6 @@
 (defn mission-factory []
   {:id :just-html
    :objective "In this mission, we discover that<br>mxWeb is just reactive HTML/CSS."
-   :source-path "mxweb-trainer.mission/just-html"
    :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki/It's-Just-HTML-CSS"
    :content its-just-html})
 
@@ -51,16 +50,13 @@
     ;;
     ;; 1. This expression will return the necessary `onclick` handler:
     ;;   (helper/find-and-set :dum-dum :success true)
-    ;; 2. We like the label "Claim Mission", but suit yourself!
+    ;; 2. We like the label "Accomplish", but suit yourself!
     ;;    And use 'style/nice-button-style' defined above for the style attribute, if you like.
     ;; 3. Then to complete this mission, just click the button!
     ;;
     ;; OK, go for it!
     ;;
     ;; --- your button code here ---
-    (button {:style style/nice-button-style
-             :onclick (helper/find-and-set :dum-dum :success true)}
-      "Claim HTML")
     ;;
     ;; Stuck? Come visit @kennytilton in the #matrix channel of Clojurians
     ))

@@ -35,7 +35,7 @@
                  ";background:pink")}
     {:missions        [(just/mission-factory)
                        (cells/mission-factory)]
-     :mission-idx     (cI 0)
+     :mission-idx     (cI 1)  ;;todo save in local storage
      :current-mission (cF (prn :missions!!!!!! (mget me :missions))
                         (nth (mget me :missions)
                           (mget me :mission-idx)))}
@@ -61,12 +61,8 @@
 
     (div {}{}
       (let [m (mget (fmu :training) :current-mission)]
-        (prn :mission!!!!!!!!! m)
-        (vector
+        [
           ((:content m))
-          #_ (case (:id m)
-            :just-html (just/its-just-html)
-            :cells-intro (cells/counter-cells))
           (p {:style "font-size:1.5em;text-align:center"}
             (:objective m))
           (p {:style "font-size:1em;text-align:center"}
@@ -74,8 +70,7 @@
             (a {:target "_blank"
                 :href   (:wiki-url m)}
               "here")
-            ".)")
-          )))))
+            ".)")]))))
 
 
 
