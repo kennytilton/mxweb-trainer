@@ -2,3 +2,11 @@
              :onclick (helper/find-and-set :dum-dum :success true)}
       "Claim HTML")
 
+#_ (button {:style    style/uncolored-button-style
+               :onclick  (fn [e] (md/mswap! (evt-mx e) :counter inc))
+               :disabled (cF (mget me :maxxed-out?))}
+        {:counter     (cI 0)
+         :maxxed-out? (cF (>= (mget me :counter) 3))}
+        (str "I have been clicked "
+          (if (mget me :maxxed-out?) "enough" (mget me :counter))
+          " times."))

@@ -1,5 +1,23 @@
 === road map
 
+==== hacks
+* have mget squawk if property not defined
+
+==== unsorted
+* dynamic kids
+* fm-find-other
+
+==== observers
+* in-line observers
+* `with-cc` change dispatch in observers
+* observer `client-queue-handler`
+* overriding `with-integrity`
+
+==== fancy cells
+* _cFn_
+* ephemeral cells
+* synapses
+
 ==== styling
 * introduce nice way of building style string from CLJ map
 * make style formulaic
@@ -9,7 +27,9 @@
 ==== local storage
 * keep track of where they are
 
-
+==== wrapping examples
+* localStorage
+* XHR
 
 = AsciiDoc Article Title
 Firstname Lastname <author@asciidoctor.org>

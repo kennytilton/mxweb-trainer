@@ -12,6 +12,7 @@
             [mxweb-trainer.reusable.time :as timer]
             [mxweb-trainer.util.helper :as helper]
             [mxweb-trainer.reusable.style :as style]
+            [mxweb-trainer.reusable.mission-add-on :as add-on]
             ))
 
 (declare its-just-html)
@@ -21,17 +22,6 @@
    :objective "In this mission, we discover that<br>mxWeb is just reactive HTML/CSS."
    :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki/It's-Just-HTML-CSS"
    :content its-just-html})
-
-(defn mi-dum-dum []
-  (div {} {:name    :dum-dum
-           :success (cI false)}
-    (when (md/mget me :success)
-      (figure {#_#_:style "background:red"}
-        (audio {:src      "/audio/mi-dum-dum.mp3"
-                :controls true
-                :loop     true
-                :onplay   (fn [e] (prn :onplay-sees e))
-                :autoplay true})))))
 
 (defn its-just-html []
   (div {:style (str "display:flex"
@@ -44,19 +34,21 @@
     (span {:style "font-size:3em"}
       "Hello, Matrix")
 
-    (span "The time is now....")
+    (span "The time is now...")
     (timer/clock)
-    (mi-dum-dum)
+    (add-on/mi-dum-dum)
     ;;
-    ;; 1. This expression will return the necessary `onclick` handler:
-    ;;   (helper/find-and-set :dum-dum :success true)
-    ;; 2. We like the label "Accomplish", but suit yourself!
+    ;; 1. Use helper/its-just-html-click-handler to handle onclick events;
+    ;; 2. We like the label "Accomplish Mission", but suit yourself!
     ;;    And use 'style/nice-button-style' defined above for the style attribute, if you like.
     ;; 3. Then to complete this mission, just click the button!
     ;;
     ;; OK, go for it!
     ;;
     ;; --- your button code here ---
+    #_ (button {:style style/nice-button-style
+             :onclick helper/its-just-html-click-handler}
+      "Accomplish Mission")
     ;;
     ;; Stuck? Come visit @kennytilton in the #matrix channel of Clojurians
     ))

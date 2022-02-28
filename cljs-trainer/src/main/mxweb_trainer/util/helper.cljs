@@ -18,3 +18,8 @@
     (md/mset!
       (mxu-find-name (evt-mx e) name)
       property value)))
+
+(defn its-just-html-click-handler [e]
+  (md/mset!
+    (mxu-find-name (evt-mx e) :dum-dum)
+    :success true))
