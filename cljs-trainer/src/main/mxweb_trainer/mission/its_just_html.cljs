@@ -24,13 +24,7 @@
    :content its-just-html})
 
 (defn its-just-html []
-  (div {:style (str "display:flex"
-                 ";flex-direction:column"
-                 ";align-items:center"
-                 ";align-content:center"
-                 ";justify-content:center"
-                 ";padding:9px"
-                 ";background:pink")}
+  (div {:style style/mission-style}
     (span {:style "font-size:3em"}
       "Hello, Matrix")
 

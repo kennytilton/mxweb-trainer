@@ -11,6 +11,7 @@
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.util.helper :as helper]
             [mxweb-trainer.reusable.style :as style]
+            [mxweb-trainer.mission.welcome :as welcome]
             [mxweb-trainer.mission.its-just-html :as just]
             [mxweb-trainer.mission.cells-intro :as cells]))
 
@@ -24,14 +25,36 @@
    }
   )
 
-(defn welcome []
-  (div "Welcome. Click next."))
 
-(defn welcome-factory []
-  {:id :trainer-welcome
-   :objective "Welcome to the mxWeb Trainer"
-   :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki"
-   :content welcome})
+
+(defn mission-control-bar []
+  (div {:style (str "display:flex"
+                 ";flex-direction:row"
+                 ";background:red"
+                 ";width:100%"
+                 ";align-items:center"
+                 ";align-content:center"
+                 ";justify-content: space-around"
+                 ";padding:3px")}
+    (let [{:keys [source wiki-url] :as mission} (mget (fmu :training) :current-mission)]
+      (prn :bar-sees!!! mission wiki-url)
+      [(button {:disabled (cF (not (pos? (mget (fmu :training) :mission-idx))))
+                :onclick  (fn [e] (mswap! (fmu :training) :mission-idx dec))}
+         "back")
+       (if source
+         (a {:target "_blank"
+             :href   source} "Source code")
+         (span ""))
+       (span {:style "color:white"} "Mission Control")
+       (if wiki-url
+         (a {:target "_blank"
+             :href   wiki-url} "Wiki Help")
+         (span ""))
+
+       (button {:disabled (cF (not (< (mget (fmu :training) :mission-idx)
+                                     (dec (count (mget (fmu :training) :missions))))))
+                :onclick  (fn [e] (mswap! (fmu :training) :mission-idx inc))}
+         "next")])))
 
 (defn training-root []
   (div {:name  :training
@@ -42,43 +65,28 @@
                  ";justify-content:center"
                  ";padding:9px"
                  ";background:pink")}
-    {:missions        [(welcome-factory)
+    {:missions        [(welcome/mission-factory)
                        (just/mission-factory)
                        (cells/mission-factory)]
-     :mission-idx     (cI 0)  ;;todo save in local storage
+     :mission-idx     (cI 0)                                ;;todo save in local storage
      :current-mission (cF (prn :missions!!!!!! (mget me :missions))
                         (nth (mget me :missions)
                           (mget me :mission-idx)))}
-    (img {:src   "/images/mx-banner-red.jpg"
-          :alt   "The Matrix logo, a cell culture Petri dish"
-          :style "max-width:100%;max-height:100%"})
-    (div {:style (str "display:flex"
-                   ";flex-direction:row"
-                   ";background:red"
-                   ";width:100%"
-                   ";align-items:center"
-                   ";align-content:center"
-                   ";justify-content: space-around"
-                   ";padding:3px")}
-      (button {:disabled (cF (not (pos? (mget (fmu :training) :mission-idx))))
-               :onclick  (fn [e] (mswap! (fmu :training) :mission-idx dec))}
-        "back")
-      (span {:style "color:white"} "Mission Control")
-      (button {:disabled (cF (not (< (mget (fmu :training) :mission-idx)
-                                    (dec (count (mget (fmu :training) :missions))))))
-               :onclick  (fn [e] (mswap! (fmu :training) :mission-idx inc))}
-        "next"))
 
-    (div {}{}
+    (img {:src      "/images/mx-banner-slim.jpg"
+          :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki"
+          :alt      "The Matrix logo, a cell culture Petri dish"
+          :style    "max-width:100%;max-height:100%"})
+    (mission-control-bar)
+
+    (div {} {}
       (let [m (mget (fmu :training) :current-mission)]
-        [(p {:style "font-size:1.5em;text-align:center"}
-           (:objective m))
-         (p {:style "font-size:1em;text-align:center"}
-           "(Mission instructions are on the mxWeb-Trainer Wiki "
-           (a {:target "_blank"
-               :href   (:wiki-url m)} "here") ".)")
 
-          ((:content m))]))))
+        [
+         (p {:style "font-size:1.5em;text-align:center"}
+           (:objective m))
+
+         ((:content m))]))))
 
 
 
