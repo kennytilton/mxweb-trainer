@@ -19,7 +19,8 @@
 
 (defn mission-factory []
   {:id :just-html
-   :objective "In this mission, we discover that<br>mxWeb is just reactive HTML/CSS."
+   :source "its_just_html"
+   :objective "Objective: mxWeb is just reactive HTML/CSS."
    :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki/It's-Just-HTML-CSS"
    :content its-just-html})
 

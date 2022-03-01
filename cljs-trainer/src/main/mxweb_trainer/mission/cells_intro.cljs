@@ -18,6 +18,7 @@
 
 (defn mission-factory []
   {:id        :cells-intro
+   :source "cells_intro"
    :objective "The Mission: baby steps with Matrix reactivity."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Hello,-Cells"
    :content   counter-cells})
@@ -104,6 +105,7 @@
                        ;;";color:" (if (mget me :maxxed-out?) "#aaa" "black")
                        ))}
       ;; --- your code here ---------
+      (span "Hi, Mom!")
       ;; Replace this SPAN with a button meeting these requirements:
       ;; * the label is "I have been clicked N times.", where N is a counter of how many times it has been clicked;
       ;; * the counter must start at zero; and
