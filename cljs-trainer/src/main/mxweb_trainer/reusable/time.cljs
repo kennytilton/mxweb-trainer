@@ -29,7 +29,6 @@
                (cFonce (reset! jid (js/setInterval
                                 #(if (mdead? me)
                                    (when-let [id @jid]
-                                     (prn :clearing-id cache :or id)
                                      (js/clearInterval id)
                                      (reset! jid nil))
                                    (mset! me :tick true))

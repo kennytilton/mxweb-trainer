@@ -6,7 +6,7 @@
              :refer [matrix mx-par mget mget mset! mset! mswap!
                      mxi-find mxu-find-name fmu] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [section figure audio h1 img input p a span label ul li div button br]]
+             :refer-macros [section figure audio h1 h2 h3 img input p a span label ul li div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.util.helper :as helper]
@@ -15,8 +15,6 @@
             [mxweb-trainer.mission.its-just-html :as just]
             [mxweb-trainer.mission.cells-intro :as cells]
             [mxweb-trainer.mission.no-islands :as no-islands]))
-
-;; todo routing
 
 (defn mission-control-bar []
   (div {:style (str "display:flex"
@@ -54,8 +52,9 @@
               ";align-items:center"
               ";align-content:center"
               ";justify-content:center"
-              ";padding:9px"
-              ";background:pink")}
+              ";padding:0px"
+              ";background:linen")}
+    ;; todo routing
     {:missions        [(welcome/mission-factory)
                        (just/mission-factory)
                        (cells/mission-factory)
@@ -64,17 +63,28 @@
      :current-mission (cF (nth (mget me :missions)
                             (mget me :mission-idx)))}
 
-    (img {:src   "/images/mx-banner-slim.jpg"
+    (div {:style (str "display:flex"
+                   ";flex-direction:column"
+                   ";align-items:center"
+                   ";align-content:center"
+                   ";justify-content:center"
+                   ";padding:0px"
+                   ";width:100%"
+                   ";background:maroon")}
+      (img {:src   "/images/mx-banner-slim-72.jpg"
           :alt   "The Matrix logo, a cell culture Petri dish"
-          :style "max-width:100%;max-height:100%"})
+          :style "height:96px"
+          ;;:style "width:100%;height:96px"
+            }))
 
     (mission-control-bar)
 
     (div {:style "color:black"} {}
       (let [m (mget (fmu :training) :current-mission)]
-        [(p {:style "font-size:1.5em;text-align:center"}
+        [(h2 {:style "font-size:1.5em;text-align:center"}
+           (:title m))
+         (p {:style "font-size:1em;text-align:center"}
            (:objective m))
-
          ((:content m))]))))
 
 

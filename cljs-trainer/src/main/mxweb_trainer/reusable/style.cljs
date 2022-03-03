@@ -7,7 +7,29 @@
     ";align-content:center"
     ";justify-content:center"
     ";padding:3px"
-    ";background:pink"))
+    ;;";background:pink"
+    ))
+
+(def row-top (str "display:flex"
+               ";flex-direction:row"
+               ";align-items:top"
+               ";align-content:top"
+               ";justify-content:center"
+               ";padding:3px"))
+
+(def column-left (str "display:flex"
+                   ";flex-direction:column"
+                   ";align-items:left"
+                   ";align-content:left"
+                   ";justify-content:center"
+                   ";padding:3px"))
+
+(def column-center (str "display:flex"
+                     ";flex-direction:column"
+                     ";align-items:center"
+                     ";align-content:center"
+                     ";justify-content:center"
+                     ";padding:3px"))
 
 (def nice-button-style
   (str "background:#ea4c89"

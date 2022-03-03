@@ -1,10 +1,12 @@
 (ns mxweb-trainer.mission.no-islands
   (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
+            [tiltontec.cell.base :refer-macros [without-c-dependency]]
             [tiltontec.model.core
-             :refer [matrix mx-par mget mget mset! mxu-find-name fmu] :as md]
+             ;; todo lose md- prefix on kids %a
+             :refer [matrix mx-par mget mget mset! mxu-find-name fmu md-kids] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [h1 audio img input figure p a span div button br]]
+             :refer-macros [h1 h2 audio img input figure p a span div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.reusable.time :as timer]
@@ -19,66 +21,52 @@
 (defn mission-factory []
   {:id        :no-island
    :source    "no_islands"
-   :objective "The Mission: global, scoped reach."
+   :title     "No Widget Is An Island"
+   :objective "Your Mission: global, naturally-scoped access to state.<br>aka, Omniscience and omnipotence."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/No-Widget-Is-An-Island"
    :content   no-islands})
 
-(defn node [node-spec]
-  ;(prn :nspec node-spec (vector? node-spec))
-  (let [[label color value] (if (vector? node-spec) node-spec [node-spec :white nil])]
-    (prn :node-generated label color value)
-    (span {:style (cF (str "color:black;"
-                        (if (mget me :tagged?)
-                          (str "border:none; background:" (name color))
-                          (str "border: medium solid " (name color)))
-                        ";margin:3px;padding:3px"))}
-      {:tagged? (cI false)
-       :name    (keyword label)}
-      (if value (str label "=" value) label))))
-
-(defn tree [root & kid-specs]
-  ;(prn :tree-sees root kid-specs)
-  (let [[label color value] (if (vector? root) root [root :white nil])]
-    (div {:style (str "display:flex"
-                   ";background:white"
-                   ";flex-direction:column"
-                   ";align-items:center"
-                   ";align-content:center"
-                   ";justify-content:center"
-                   ";border: thin dashed gray"
-                   ";padding:3px")}
-      {:name    (keyword label)
-       :tagged? (cI false)}
-      (span label)
-      (when (seq kid-specs)
-        (map #(node %) kid-specs)))))
-
-(defn msn-try [color & [finder]]
-  (button {:style   (str "min-width:2em;min-height:2em;margin:4px;border:none;background:" color)
+(defn target-toggle [color & [target-finder]]
+  (button {:style   (str "min-width:2em;min-height:2em;margin:4px;border:outset;background:" color)
            :onclick (cF
-                      ;; this one made me think.
-                      ;; when the matrix springs to life,
-                      ;; each "try" button that has had a finder coded...
-                      (when finder
-                        ;; ...goes outs and finds the node we want each finder to use as "me",
-                        ;; aka the origin of the family search.
-                        (when-let [root (fmu :app-root)]
-                          (prn :root! root)
-                          (let [search-from (md/fget :me (mget root :data) :me? false :inside? true :must? true :up? false)]
-                            ;; It better find it.
-                            (prn :search-from!! search-from)
-                            (assert search-from)
-                            ;; We then return a handler
+                      ;; [This one made me think. This is advanced material not relevant to the mission,
+                      ;; but the ambitious reader may find it helpful.
+                      ;;
+                      ;; The tricky thing is that the tree view is not the tree we are learning
+                      ;; to navigate! The tree view is generated *from* the _data_ tree we want to navigate.
+                      ;; What is the salient difference? The tree view will have additional layers of DOM
+                      ;; to achieve neat layout. Its view nodes have to "watch" the nodes in the navigation tree
+                      ;; to see when _they_ get tagged, and so when to turn a solid color. -kt]
+                      ;;
+                      ;; Understanding this code
+                      ;; -----------------------
+                      ;; When the matrix springs to life, a process we call "awakening",
+                      ;; for each "toggle" button that is specified with a "finder"...
+                      (when target-finder
+                        ;; ...go out and find the node we want each finder to use as "me", the search starting point.
+                        ;; Looking at the code, we know the data tree is the :data property of the node named :app-root.
+                        ;; We find that first.
+                        (let [root (fmu :app-root)]
+                          ;; as a mnemonic, we gave the name :me to the node we plan to use as the search starting node.
+                          ;; The starting node is fundamental to Matrix: it means the state seen by a node is always
+                          ;; naturally scoped from the local node making a computation out to wider and wider scope. This
+                          ;; search begins in cell formulas and those know only about the anaphoric "me".
+                          ;;
+                          ;; So let's find :me in the data tree (in the :data property of the app root)....
+                          (let [search-me (md/fget :me (mget root :data)
+                                            :must? true ; throw an error if search fails
+                                            :me? false
+                                            :inside? true
+                                            :up? false)]
+                            ;; We then return a handler for the toggle button that uses the specified finder
                             (fn [event]
-                              (prn :try-fires color search-from event)
-                              (let [target (finder search-from)]
-                                (prn :fire-target!!! target (mget target :tagged?))
+                              (let [target (target-finder search-me)]
                                 (if target
                                   (md/mswap! target :tagged? not)
-                                  (prn :cannot-find-target-for!!!!! color search-from))))))))}))
+                                  (do (prn :cannot-find-target-for!!!!! color :from search-me)
+                                      (js/alert (str "Cannot find target for " color))))))))))}))
 
 (defn mx-tree [spec]
-  (prn :spec spec)
   (let [[name color secret & kids] (if (vector? spec)
                                      spec [spec])]
     (md/make ::data-tree
@@ -87,76 +75,63 @@
       :kids (cF (md/the-kids
                   (map mx-tree kids))))))
 
-(defn tree-div [d]
-  (let [[label color secret tagged? kids] (map (fn [k] (mget d k)) [:name :color :secret :tagged? :kids])]
-    (prn :treediv-sees label color tagged? secret kids)
-    (div {:style (cF (str "display:flex"
-                       ";flex-direction:column"
-                       ";align-items:center"
-                       ";align-content:center"
-                       ";justify-content:center"
-                       ";padding:3px"))}
-      {:name (keyword (str "tdiv-" (name label)))
-       :node d}
-      (span {:style (cF (do
-                          (prn :treenode label color )
-                          (str "padding:3px;"
-                            (if color
-                              (if (mget d :tagged?)
-                                (str ";background:" (name color) ";border:none")
-                                (str ";border: thick solid " (name color)))
-                              ";border: thin dashed gray"))))}
-             (name label))
-      (when (seq kids)
-        (div {:style (str "display:flex"
-                       ";flex-direction:row"
-                       ";align-items:top"
-                       ";align-content:top"
-                       ";justify-content:center"
-                       ;;";border: thin dashed gray"
-                       ";padding:3px")}
-          (map #(tree-div %) kids))))))
+;; some handy accessors to hide `mget`
+(defn mxt-name [mx] (mget mx :name))
+(defn mxt-tagged? [mx] (mget mx :tagged?))
+(defn mxt-color$ [mx]
+  (when-let [c (mget mx :color)] (name c)))
+(defn mxt-name$ [mx] (name (mxt-name mx)))
 
-(defn no-islands []
-  (let [data (mx-tree [:par :lime nil
-                       [:sibling nil nil
-                        [:k1 nil 7]
-                        :k2
-                        :k3]
+(defn render-data-tree [data-node]
+  (div {:style (str style/column-center ";padding:4px;background:white"
+                 (when (seq (md-kids data-node))
+                   ";border: thick outset linen; padding:18px"))}
+    {:node data-node} ;; link rendered tree back to data tree
+    (span {:style (cF (let [color (mxt-color$ data-node)]
+                        (str "margin:3px;padding:3px;font-size:1.5em"
+                          (if color
+                            (if (mxt-tagged? data-node)
+                              (str ";background:" color ";border: medium solid " color)
+                              (str ";border: medium solid " color))))))}
+      (str (mxt-name$ data-node)
+        (when-let [s (mget data-node :secret)]
+          (str "=" s))))
+    (when (seq (mget data-node :kids))
+      (div {:style (str style/row-top
+                     #_ ";border: thick outset linen; padding:18px")}
+        (map #(render-data-tree %) (mget data-node :kids))))))
+
+(defn no-islands
+  "GUI application elements are highly inter-dependent.
+  We learn how to navigate from a component to others to discover
+  state in a naturally scoped fashion, and likewise to mutate state."
+  []
+  (let [data-tree (mx-tree [:par :lime nil
+                       [:prev-sibling nil nil
+                        [:k1 nil 7] :k2 :k3]
                        [:me :cyan nil
-                        :k1
-                        [:k2 :red]
-                        :k3]
-                       [:sibling :sandybrown nil
-                        [:k1 :fuchsia 42]
-                        :k2 :k3]])]
+                        :k1 [:k2 :red] :k3]
+                       [:next-sibling :sandybrown nil
+                        [:k1 :fuchsia 42] :k2 :k3]])]
     (div {:style style/mission-style}
       {:name :app-root
-       :data data}
-      (h1 "No Widget Is An Island")
-      (div {:style (str "display:flex"
-                     ";flex-direction:row"
-                     ";align-items:top"
-                     ";align-content:top"
-                     ";justify-content:center"
-                     ";padding:3px")}
-        (div {:style (str "display:flex"
-                       ";flex-direction:column"
-                       ";align-items:left"
-                       ";align-content:left"
-                       ";justify-content:center"
-                       ";padding:3px")}
-          ;; (fget what where :me? false, :inside? false, :up? true, :wocd? true ;; without-c-dependency
-          (msn-try "red" #_(fn [me]
-                             (prn :redme (count (mget me :kids)) me)
-                             (let [k2 (md/fget (fn [x y]
-                                                 (prn :testing x :vs y)
-                                                 (= :k2 (mget y :name)))
-                                        me :me? false :up? false :inside? true)]
-                               (prn :k2!!!!! k2)
-                               k2)))
-          (msn-try "lime" #_(fn [me] (fmu :ancestor)))
-          (msn-try "aqua" identity)
-          (msn-try "fuchsia")
-          (msn-try "sandybrown"))
-        (tree-div data)))))
+       :data data-tree}
+      (div {:style (str style/column-center)}
+        (div {:style style/row-top}
+          (span {:style "font-size:1.5em"} "Please complete these togglers:")
+          ;; (fget what-is-sought where-do-we-start
+          ;;    :me?     false   should we consider the start node
+          ;;    :inside? false   should we search descendants of the starting node?
+          ;;    :up?     true    search recursively up (ancesters, starting with parent of start node)?
+          ;;    :wocd?   true    should we NOT form reactive dependency on the "kids" nodes as wesearch them?
+
+          ;; --- Your code here ---------
+          (target-toggle "red" (fn [me] nil) #_ (fn [me]
+                                 (second (mget me :kids))))
+          (target-toggle "lime" mx-par)
+          (target-toggle "aqua" identity)
+          (target-toggle "fuchsia" (fn [me]
+                                     (md/fget (fn [mx] (= 42 (mget mx :secret))) me
+                                       :inside? true)))
+          (target-toggle "sandybrown" md/nextsib))
+        (render-data-tree data-tree)))))
