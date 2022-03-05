@@ -22,58 +22,36 @@
   {:id        :no-island
    :source    "no_islands"
    :title     "No Widget Is An Island"
-   :objective "Your Mission: global, naturally-scoped access to state.<br>aka, Omniscience and omnipotence."
+   :objective "Your Mission: global, scoped Matrix tree navigation."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/No-Widget-Is-An-Island"
    :content   no-islands})
 
-(defn target-toggle [color & [target-finder]]
+(defn target-toggle [color color-name target-finder]
   (button {:style   (str "min-width:2em;min-height:2em;margin:4px;border:outset;background:" color)
-           :onclick (cF
-                      ;; [This one made me think. This is advanced material not relevant to the mission,
-                      ;; but the ambitious reader may find it helpful.
-                      ;;
-                      ;; The tricky thing is that the tree view is not the tree we are learning
-                      ;; to navigate! The tree view is generated *from* the _data_ tree we want to navigate.
-                      ;; What is the salient difference? The tree view will have additional layers of DOM
-                      ;; to achieve neat layout. Its view nodes have to "watch" the nodes in the navigation tree
-                      ;; to see when _they_ get tagged, and so when to turn a solid color. -kt]
-                      ;;
-                      ;; Understanding this code
-                      ;; -----------------------
-                      ;; When the matrix springs to life, a process we call "awakening",
-                      ;; for each "toggle" button that is specified with a "finder"...
-                      (when target-finder
-                        ;; ...go out and find the node we want each finder to use as "me", the search starting point.
-                        ;; Looking at the code, we know the data tree is the :data property of the node named :app-root.
-                        ;; We find that first.
-                        (let [root (fmu :app-root)]
-                          ;; as a mnemonic, we gave the name :me to the node we plan to use as the search starting node.
-                          ;; The starting node is fundamental to Matrix: it means the state seen by a node is always
-                          ;; naturally scoped from the local node making a computation out to wider and wider scope. This
-                          ;; search begins in cell formulas and those know only about the anaphoric "me".
-                          ;;
-                          ;; So let's find :me in the data tree (in the :data property of the app root)....
-                          (let [search-me (md/fget :me (mget root :data)
-                                            :must? true ; throw an error if search fails
-                                            :me? false
-                                            :inside? true
-                                            :up? false)]
-                            ;; We then return a handler for the toggle button that uses the specified finder
-                            (fn [event]
-                              (let [target (target-finder search-me)]
-                                (if target
-                                  (md/mswap! target :tagged? not)
-                                  (do (prn :cannot-find-target-for!!!!! color :from search-me)
-                                      (js/alert (str "Cannot find target for " color))))))))))}))
+           :onclick (cF (when target-finder
+                          (let [root (fmu :app-root)]
+                            (let [search-me (md/fget :me (mget root :data)
+                                              :must? true   ; throw an error if search fails
+                                              :me? false
+                                              :inside? true
+                                              :up? false)]
+                              (fn [event]
+                                (let [target (target-finder search-me)]
+                                  (if target
+                                    (md/mswap! target :tagged? not)
+                                    (do (prn :cannot-find-target-for!!!!! color-name :from search-me)
+                                        (js/alert (str "Cannot find target for " color-name))))))))))}))
 
 (defn mx-tree [spec]
+  (prn :spec spec)
   (let [[name color secret & kids] (if (vector? spec)
                                      spec [spec])]
     (md/make ::data-tree
       :name name :color color :secret secret
       :tagged? (cI false)
-      :kids (cF (md/the-kids
-                  (map mx-tree kids))))))
+      :kids (when (seq kids)
+              (cF (md/the-kids
+                    (map mx-tree kids)))))))
 
 ;; some handy accessors to hide `mget`
 (defn mxt-name [mx] (mget mx :name))
@@ -86,52 +64,106 @@
   (div {:style (str style/column-center ";padding:4px;background:white"
                  (when (seq (md-kids data-node))
                    ";border: thick outset linen; padding:18px"))}
-    {:node data-node} ;; link rendered tree back to data tree
+    {:node data-node}                                       ;; link rendered tree back to data tree
     (span {:style (cF (let [color (mxt-color$ data-node)]
                         (str "margin:3px;padding:3px;font-size:1.5em"
                           (if color
                             (if (mxt-tagged? data-node)
-                              (str ";background:" color ";border: medium solid " color)
-                              (str ";border: medium solid " color))))))}
+                              (str ";color:white;background:" color ";border: thick solid " color)
+                              (str ";border: thick solid " color))))))}
       (str (mxt-name$ data-node)
         (when-let [s (mget data-node :secret)]
           (str "=" s))))
     (when (seq (mget data-node :kids))
       (div {:style (str style/row-top
-                     #_ ";border: thick outset linen; padding:18px")}
+                     #_";border: thick outset linen; padding:18px")}
         (map #(render-data-tree %) (mget data-node :kids))))))
 
+;; color-blind friendly colors from https://jfly.uni-koeln.de/color/
+(def cb-reddish-purple "#cc79a7")
+(def cb-orange "#e69d00")
+(def cb-yellow "#f0e442")
+(def cb-vermillion "#d55c00")
+(def cb-sky-blue "#56b3e9")
+(def cb-black "#000")
+(def cb-bluish-green "#009e74")
+
+(defn render-togglers []
+  (div {:style (str style/row-top ";align-items:center")}
+    (span {:style "font-size:1.5em"} "Solved:")
+
+    ;; --- solved examples -------
+    (target-toggle cb-sky-blue "sky blue"
+      (fn [me] me))
+    (target-toggle cb-reddish-purple "reddish-purple"
+      ;; we search with an arbitrary test function
+      (fn [me] (md/fget (fn [mx] (and
+                                   (= :k1 (mxt-name mx))
+                                   (= 7 (mget mx :secret))))
+                 me :inside? true)))
+
+    ;; --- Unsolved examples: Your code here! ---------
+    ;;
+    ;; Please see https://github.com/kennytilton/mxweb-trainer/wiki/No-Widget-Is-An-Island
+    ;; for help navigating as specified below.
+    ;;
+    ;; The idea is to navigate from a solid-colored "toggler" to identify the corresponding
+    ;; bordered tree node.
+    ;;
+    ;; Note that nodes labeled "kN" have keyword :kN as their Matrix names, and where we see
+    ;; sth like k1=42, that means that node has the property :secret with the value 42.
+    ;; Because the name "k1" repeats, you will need to use the "secret" to disambiguate.
+
+    (span {:style "margin-left:1em;font-size:1.5em"} "Unsolved:")
+    (target-toggle cb-orange "orange"
+      (fn [me] nil)
+      #_(fn [me] (fmu :trash)))
+    (target-toggle cb-vermillion "vermillion"
+      (fn [me] nil)
+      #_(fn [me]
+          (second (mget me :kids))))
+    (target-toggle cb-yellow "yellow"
+      (fn [me] nil)
+      #_mx-par)
+    (target-toggle cb-bluish-green "bluish-green"
+      ;; careful. We cannot just search by name, because other widgets earlier in
+      ;; the search algorithm order have the same name!
+      (fn [me] nil)
+      #_(fn [me]
+          (md/fget (fn [mx] (and (= :k1 (mxt-name mx))
+                              (= 42 (mget mx :secret))))
+            me :inside? true)))
+    (target-toggle cb-black "black"
+      (fn [me] nil)
+      #_md/nextsib)))
+
 (defn no-islands
-  "GUI application elements are highly inter-dependent.
-  We learn how to navigate from a component to others to discover
-  state in a naturally scoped fashion, and likewise to mutate state."
+  ; GUI application elements are highly inter-dependent. We want to read and
+  ; mutate arbitrary state, as our app demands, without fussing with subscriptions,
+  ; actions, reducers, and other artifacts of the Flux pattern.
+  ;
+  ; Here we simply learn how to navigate precisely and unambiguously from
+  ; a starting 'me' node to intended other nodes, to access state in a global yet
+  ; naturally scoped fashion."
   []
-  (let [data-tree (mx-tree [:par :lime nil
-                       [:prev-sibling nil nil
-                        [:k1 nil 7] :k2 :k3]
-                       [:me :cyan nil
-                        :k1 [:k2 :red] :k3]
-                       [:next-sibling :sandybrown nil
-                        [:k1 :fuchsia 42] :k2 :k3]])]
+  ;; First, we define an abstract state tree from which we will generate
+  ;; an isomorphic tree of Matrix models:
+  (let [data-tree (mx-tree [:app nil nil
+                            [:toolbar nil nil
+                             [:trash cb-orange nil]]
+                            [:par cb-yellow nil
+                             [:prev-sibling nil nil
+                              [:k1 cb-reddish-purple 7] :k2 :k3]
+                             [:me cb-sky-blue nil
+                              :k1 [:k2 cb-vermillion] :k3]
+                             [:next-sibling cb-black nil
+                              [:k1 cb-bluish-green 42] :k2 :k3]]])]
+    ;; Next, we build our GUI, with state togglers (your mission)
+    ;; and a visual rendering of the state tree to help you think about
+    ;; the navigations you will need to implement:
     (div {:style style/mission-style}
       {:name :app-root
        :data data-tree}
       (div {:style (str style/column-center)}
-        (div {:style style/row-top}
-          (span {:style "font-size:1.5em"} "Please complete these togglers:")
-          ;; (fget what-is-sought where-do-we-start
-          ;;    :me?     false   should we consider the start node
-          ;;    :inside? false   should we search descendants of the starting node?
-          ;;    :up?     true    search recursively up (ancesters, starting with parent of start node)?
-          ;;    :wocd?   true    should we NOT form reactive dependency on the "kids" nodes as wesearch them?
-
-          ;; --- Your code here ---------
-          (target-toggle "red" (fn [me] nil) #_ (fn [me]
-                                 (second (mget me :kids))))
-          (target-toggle "lime" mx-par)
-          (target-toggle "aqua" identity)
-          (target-toggle "fuchsia" (fn [me]
-                                     (md/fget (fn [mx] (= 42 (mget mx :secret))) me
-                                       :inside? true)))
-          (target-toggle "sandybrown" md/nextsib))
+        (render-togglers)
         (render-data-tree data-tree)))))
