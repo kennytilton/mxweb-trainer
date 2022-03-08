@@ -9,7 +9,7 @@ The trainer combines in one hybrid package:
 * [Wiki](https://github.com/kennytilton/mxweb-trainer/wiki) documentation; and
 * hands-on learning exercises for you to complete.
 
-It also comes with an author-instructor, `@kennytilton`, available by DM or in the #matrix channel on the [#clojurians](clojurians.slack.com) Slack.
+It also comes with an author-instructor, `@kennytilton`, available by DM or in the #matrix channel on the #clojurians Slack.
 
 Now please find below instructions on running the app, in its WIP current form. The opening page will guide you to our [Wiki](https://github.com/kennytilton/mxweb-trainer/wiki) for instructions on following the progressive learning activities.
 
