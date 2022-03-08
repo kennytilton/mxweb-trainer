@@ -4,6 +4,13 @@
 
 This is the CLJS version of the mxWeb Trainer. We will have a JS version RSN.
 
+The trainer combines in one:
+* an exemplar application
+* [Wiki](https://github.com/kennytilton/mxweb-trainer/wiki) documentation; and
+* hands-on learning exercises for you to complete.
+
+It also comes with a live instructor, `@kennytilton`, available in the #matrix channel on the [#clojurians](clojurians.slack.com) Slack.
+
 ## Required Software
 
 - [node.js (v6.0.0+)](https://nodejs.org/en/download/)
