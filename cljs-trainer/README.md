@@ -4,6 +4,15 @@
 
 This is the CLJS version of the mxWeb Trainer. We will have a JS version RSN.
 
+The trainer combines in one hybrid package:
+* an exemplar Web application;
+* [Wiki](https://github.com/kennytilton/mxweb-trainer/wiki) documentation; and
+* hands-on learning exercises for you to complete.
+
+It also comes with an author-instructor, `@kennytilton`, available by DM or in the #matrix channel on the #clojurians Slack.
+
+Now please find below instructions on running the app, in its WIP current form. The opening page will guide you to our [Wiki](https://github.com/kennytilton/mxweb-trainer/wiki) for instructions on following the progressive learning activities.
+
 ## Required Software
 
 - [node.js (v6.0.0+)](https://nodejs.org/en/download/)
@@ -13,28 +22,30 @@ This is the CLJS version of the mxWeb Trainer. We will have a JS version RSN.
 
 ```bash
 git clone https://github.com/kennytilton/mxweb-trainer mxweb-trainer
-cd mxweb-trainer/cljs
+cd mxweb-trainer/cljs-trainer
 npm install
 npx shadow-cljs server
 ```
 
-This ^^^ runs the `shadow-cljs` server process to which all following commands will talk. It does not return us to a terminal prompt. We leave it running and open a new terminal to continue.
+This ^^^ runs the `shadow-cljs` server process to which all following commands will talk. The first startup takes a bit of time since it has to download all the dependencies and do some prep work. It does not return us to a terminal prompt. Wait until the terminal shows:
+```txt
+shadow-cljs - nREPL server started on port 59989
+```
+...then leave it running and open a new terminal to continue.
 
-The first startup takes a bit of time since it has to download all the dependencies and do some prep work. Once this is running we can get started.
+In the new terminal, enter:
 
 ```txt
 npx shadow-cljs watch app
 ```
 
-This, too, will not return us to a terminal prompt. It will begin the compilation of the configured `:app` build and re-compile whenever we change a file. 
-
-When we see a "Build completed." message our build is ready to be used.
-
+This ^^^ will not return us to a terminal prompt, either. It will begin the compilation of the configured `:app` build and re-compile whenever we change a file. When we see a "Build completed" message...
 ```txt
 [:app] Build completed. (23 files, 4 compiled, 0 warnings, 7.41s)
 ```
+... our app is ready to be used.
 
-We can now then open [http://localhost:8020](http://localhost:8020).
+We can now open [http://localhost:8020](http://localhost:8020).
 
 # Matrix from 30,000 feet
 With the Matrix library, global variables or individual properties of objects can be expressed as so-called *cells*. Cells come in two flavors. *Formulaic* cells use standard HLL code to compute their value from other cells. For a dead simple example, the *TodoMVC* rules mandate we apply the "completed" class to to-do LIs if and only if the user has marked them as, well, completed:
