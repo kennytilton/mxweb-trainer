@@ -15,4 +15,4 @@ Matrix has native versions for both JS and CLJS. mxWeb stacks exist in varying d
 * CJLS + React web; and
 * CLJS + ReactNative.
 
-We will port this trainer to all the above RSN, but for now we just have the CLJS+HTML/CSS version. Please continue [here](https://github.com/kennytilton/mxweb-trainer/tree/main/cljs) to get started on mxWeb/Matrix.
+We will port this trainer to all the above RSN, but for now we just have the CLJS+HTML/CSS version. Please continue [here](https://github.com/kennytilton/mxweb-trainer/wiki) to get started on mxWeb/Matrix.
