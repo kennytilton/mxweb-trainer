@@ -13,10 +13,7 @@
 
 (defn clock []
   (div {:class   "example-clock"
-        :style   (str "color:red"
-                   ";font-size: 64px;"
-                   ";line-height: 1.2em;")
-
+        :style   "color:red;font-size: 64px;;line-height: 1.2em;"
         :content (cF (if (mget me :tick)
                        (-> (js/Date.)
                          .toTimeString
@@ -36,13 +33,3 @@
 
 ;; todo have cells throw exceptions on attempts to act on dead cells or models
 
-#_(defn color-input []
-    (div {:class "color-input"}
-      "Time color: "
-      (input {:name     :timecolor
-              :tag/type "text"
-              :value    (cI "#f00")
-              :onchange (fn [e]
-                          (prn :evt (evt-mx e) (target-value e))
-                          (mset! (evt-mx e)
-                            :value (target-value e)))})))

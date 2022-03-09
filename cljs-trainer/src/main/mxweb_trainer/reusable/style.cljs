@@ -17,6 +17,13 @@
                ";justify-content:center"
                ";padding:3px"))
 
+(def row-center (str "display:flex"
+               ";flex-direction:row"
+               ";align-items:center"
+               ";align-content:center"
+               ";justify-content:center"
+               ";padding:3px"))
+
 (def column-left (str "display:flex"
                    ";flex-direction:column"
                    ";align-items:left"

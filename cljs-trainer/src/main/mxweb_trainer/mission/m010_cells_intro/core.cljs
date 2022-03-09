@@ -1,4 +1,4 @@
-(ns mxweb-trainer.mission.cells-intro
+(ns mxweb-trainer.mission.m010-cells-intro.core
   (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.model.core
@@ -7,21 +7,7 @@
              :refer-macros [audio img input figure p a span div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
-            [mxweb-trainer.reusable.time :as timer]
-            [mxweb-trainer.util.helper :as helper]
-            [mxweb-trainer.reusable.style :as style]
-            [mxweb-trainer.reusable.mission-add-on :as add-on]
-            ))
-
-
-(declare counter-cells)
-
-(defn mission-factory []
-  {:id        :cells-intro
-   :source "cells_intro"
-   :objective "The Mission: baby steps with Matrix reactivity."
-   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Hello,-Cells"
-   :content   counter-cells})
+            [mxweb-trainer.mission.m010-cells-intro.extra :as extra]))
 
 (defn counter-cells []
   (div {:style (str "display:flex"
@@ -93,11 +79,11 @@
     (span {:style "font-size:1.5em"}
       "Click the time to have it updated.")
     (p)
-    (add-on/mi-dum-dum-if (fn [mx]
-                            (let [ctr (md/fget :counter mx :me? false :inside? false :must? false :up? true)]
-                              (and ctr
-                                (= 3 (mget (md/fmo mx :counter) :counter))
-                                (mget ctr :disabled)))))
+    (extra/mi-dum-dum-if (fn [mx]
+                           (let [ctr (md/fget :counter mx :me? false :inside? false :must? false :up? true)]
+                             (and ctr
+                               (= 3 (mget (md/fmo mx :counter) :counter))
+                               (mget ctr :disabled)))))
 
     (div {:style (cF (str "font-size:" (+ 2 (* 0.5 (mod (mget me :counter) 3))) "em"
                        ";min-height:72px;min-width:400px"
@@ -113,16 +99,6 @@
       ;; ** change the message to "I have been clicked enough times."; and
       ;; ** disable the button using the DOM.
 
-
-      #_ (button {:style    style/uncolored-button-style
-               :onclick  (fn [e] (md/mswap! (evt-mx e) :counter inc))
-               :disabled (cF (mget me :maxxed-out?))}
-        {:name :counter
-         :counter     (cI 0)
-         :maxxed-out? (cF (>= (mget me :counter) 3))}
-        (str "I have been clicked "
-          (if (mget me :maxxed-out?) "enough" (mget me :counter))
-          " times."))
       (br)
 
       ;; hints for writing your code. You will want:
@@ -145,7 +121,13 @@
     ))
 
 
-
+(defn mission-factory []
+  {:id        :cells-intro
+   :tab-label "Basic Cells"
+   :source    "cells_intro"
+   :objective "The Mission: baby steps with Matrix reactivity."
+   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Hello,-Cells"
+   :content   counter-cells})
 
 ;;
 ;; ----------------------------------------------------------------

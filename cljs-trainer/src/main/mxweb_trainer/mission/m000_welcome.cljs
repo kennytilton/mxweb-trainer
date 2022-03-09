@@ -1,4 +1,4 @@
-(ns mxweb-trainer.mission.welcome
+(ns mxweb-trainer.mission.m000-welcome
   (:require [goog.dom :as dom]
             [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
@@ -11,14 +11,13 @@
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.reusable.time :as timer]
             [mxweb-trainer.util.helper :as helper]
-            [mxweb-trainer.reusable.style :as style]
-            [mxweb-trainer.reusable.mission-add-on :as add-on]
-            ))
+            [mxweb-trainer.reusable.style :as style]))
 
 (declare welcome)
 
 (defn mission-factory []
   {:id        :trainer-welcome
+   :tab-label "Welcome"
    :objective "Welcome to the mxWeb Trainer"
    :source "welcome"
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki"
@@ -41,13 +40,16 @@
           :href   "https://github.com/kennytilton/matrix/blob/main/README.md"} "Matrix")
       " reactive engine.")
     (p {}
-      "This app presents a series of unsolved mxWeb learning \"missions\" for you to, well, solve. "
+      "This app presents a series of unsolved mxWeb learning \"missions\" for you to, well, solve. ")
+    (p {}
       "It comes with free tutorial support/solutions from the author of mxWeb, who can be found in the #Matrix channel of the "
       (a {:target "_blank"
           :href   "https://clojurians.slack.com"} "Clojurians Slack")
       ".")
     (p {:style "padding:0"}
-      "Navigate from mission to mission using the control bar above. Each mission includes:")
+      "Select a mission by clicking its button on the left.")
+    (p {:style "padding:0"}
+      "Each mission includes:")
     (ul {:style "padding:0;margin-top:0;margin-left:36px"}
       (li "what you will learn;")
       (li "a relevant working example;")
