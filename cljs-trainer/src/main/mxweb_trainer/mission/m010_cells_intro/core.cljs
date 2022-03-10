@@ -87,9 +87,7 @@
 
     (div {:style (cF (str "font-size:" (+ 2 (* 0.5 (mod (mget me :counter) 3))) "em"
                        ";min-height:72px;min-width:400px"
-                       ";text-align:center"
-                       ;;";color:" (if (mget me :maxxed-out?) "#aaa" "black")
-                       ))}
+                       ";text-align:center"))}
       ;; --- your code here ---------
       (span "Hi, Mom!")
       ;; Replace this SPAN with a button meeting these requirements:

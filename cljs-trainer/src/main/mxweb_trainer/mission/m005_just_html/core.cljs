@@ -29,8 +29,8 @@
     (extra/mi-dum-dum)
     ;;
     ;; 0. Add a button
-    ;; 1. Use its-just-html-click-handler to handle onclick events;
-    ;; 2. We like the label "Accomplish Mission", but suit yourself!
+    ;; 1. Use function 'its-just-html-click-handler' to handle onclick events;
+    ;; 2. We like the button label "Accomplish Mission", but suit yourself!
     ;;    And use 'style/nice-button-style' defined above for the style attribute, if you like.
     ;; 3. Then to complete this mission, just click the button!
     ;;

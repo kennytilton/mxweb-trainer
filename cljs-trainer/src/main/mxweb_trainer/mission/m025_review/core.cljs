@@ -53,7 +53,7 @@
 
 (defn word-history []
   (div {:style (str style/column-center ";padding:6px")}
-    (b "History (click to delete)")
+
     ; --- Mission part 2: Your code here ---
     ; display a column of words that have been entered:
     ; - modify input widget :word-to-spell to have a new property called :entered-words
@@ -68,7 +68,8 @@
         ;; a more advanced topic is how to avoid rebuilding the
         ;; whole DOM list on each change. See Matrix "family values".
         #_ (span "<i>(Your code here #2.)</i>")
-        (map (fn [word] (span {:style   "font-size:2em; margin:3px"
+        [(b "History (click to delete)")
+         (map (fn [word] (span {:style   "font-size:2em; margin:3px"
                                   :onclick (fn [e]
                                              (let [me (evt-mx e)
                                                    ew (fmu :word-to-spell)]
@@ -78,7 +79,7 @@
                                                (md/mswap! ew :entered-words
                                                  (fn [words]
                                                    (remove #{(first (mget me :kids))} words)))))}
-                             word)) word-history)
+                             word)) word-history)]
         (span "Entered, changed words appear here. Change \"booya!\" and hit Enter to see this.")))))
 
 (defn mission-factory []
