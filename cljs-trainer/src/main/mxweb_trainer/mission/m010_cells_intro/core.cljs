@@ -7,6 +7,7 @@
              :refer-macros [audio img input figure p a span div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
+            [mxweb-trainer.reusable.style :as style]
             [mxweb-trainer.mission.m010-cells-intro.extra :as extra]))
 
 (defn counter-cells []
@@ -81,8 +82,9 @@
     (p)
     (extra/mi-dum-dum-if (fn [mx]
                            (let [ctr (md/fget :counter mx :me? false :inside? false :must? false :up? true)]
+                             (prn :dum-dum-checking!! (when ctr (mget ctr :counter)) ctr)
                              (and ctr
-                               (= 3 (mget (md/fmo mx :counter) :counter))
+                               (= 3 (mget ctr :counter))
                                (mget ctr :disabled)))))
 
     (div {:style (cF (str "font-size:" (+ 2 (* 0.5 (mod (mget me :counter) 3))) "em"
@@ -115,6 +117,15 @@
       ;; * use `(mset! MX PROPERTY-KEYWORD VALUE)` or `(mswap! MX PROPERTY-VALUE FN ARGS*)` to mutate input cells.
       ;; * CAUTION! If functions discover PROPERTY-KEYWORD is not a defined property, they silently do nothing.
 
+      (button {:style    style/uncolored-button-style
+               :onclick  (fn [e] (md/mswap! (evt-mx e) :counter inc))
+               :disabled (cF (mget me :maxxed-out?))}
+        {:name :counter
+         :counter     (cI 0)
+         :maxxed-out? (cF (>= (mget me :counter) 3))}
+        (str "I have been clicked "
+          (if (mget me :maxxed-out?) "enough" (mget me :counter))
+          " times."))
       )
     ))
 

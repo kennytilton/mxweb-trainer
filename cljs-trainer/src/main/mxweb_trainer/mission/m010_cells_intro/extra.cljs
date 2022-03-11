@@ -6,7 +6,7 @@
   (div
     (when (test me)
       (figure
-        (audio {:src      "/audio/dum-dum-full.ogg"
+        (audio {:src      "/audio/dum-dum-full.mp3"
                 :controls false ;; true
                 ;;:loop     true
                 :onplay   (fn [e] (prn :onplay-sees e))
