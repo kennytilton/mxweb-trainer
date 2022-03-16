@@ -23,7 +23,7 @@
 (def cb-bluish-green "#009e74")
 
 (defn render-togglers []
-  (div {:style (str style/row-top ";align-items:center")}
+  (div {:style (style/row-top :align-items :center)}
     (span {:style "font-size:1.5em"} "Solved:")
 
     ;; --- solved examples -------
@@ -119,10 +119,10 @@
     ;; Next, we build our GUI, with state togglers (your mission)
     ;; and a visual rendering of the state tree to help you think about
     ;; the navigations you will need to implement:
-    (div {:style style/mission-style}
+    (div {:style (style/mission-style)}
       {:name :app-root
        :data data-tree}
-      (div {:style (str style/column-center)}
+      (div {:style (style/column-center)}
         (render-togglers)
         (render-data-tree data-tree)))))
 

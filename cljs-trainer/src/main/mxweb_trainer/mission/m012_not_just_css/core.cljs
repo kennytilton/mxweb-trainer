@@ -1,4 +1,4 @@
-(ns mxweb-trainer.mission.m010-cells-intro.core
+(ns mxweb-trainer.mission.m012-not-just-css.core
   (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.model.core
@@ -6,11 +6,9 @@
             [tiltontec.mxweb.gen-macro
              :refer-macros [audio img input figure p a span div button br]]
             [tiltontec.mxweb.gen
-             :refer [make-tag dom-tag evt-mx target-value]]
-            [mxweb-trainer.reusable.style :as style]
-            [mxweb-trainer.mission.m010-cells-intro.extra :as extra]))
+             :refer [make-tag dom-tag evt-mx target-value]]))
 
-(defn counter-cells []
+(defn not-just-css []
   (div {:style (str "display:flex"
                  ";flex-direction:column"
                  ";align-items:center"
@@ -19,7 +17,7 @@
                  ";padding:9px"
                  ";background:pink")}
     (span {:style "font-size:3em"}
-      "Hello, Cells")
+      "CSS Unleashed")
 
     ; The state of a typical Matrix application is mostly derived/computed state, much as
     ; a spreadsheet is mostly cells with formulas. Both of these require /some/ state to come
@@ -80,11 +78,7 @@
     (span {:style "font-size:1.5em"}
       "Click the time to have it updated.")
     (p)
-    (extra/mi-dum-dum-if (fn [mx]
-                           (let [ctr (md/fget :counter mx :me? false :inside? false :must? false :up? true)]
-                             (and ctr
-                               (= 3 (mget ctr :counter))
-                               (mget ctr :disabled)))))
+
 
     (div {:style (cF (str "font-size:" (+ 2 (* 0.5 (mod (mget me :counter) 3))) "em"
                        ";min-height:72px;min-width:400px"
@@ -116,26 +110,17 @@
       ;; * use `(mset! MX PROPERTY-KEYWORD VALUE)` or `(mswap! MX PROPERTY-VALUE FN ARGS*)` to mutate input cells.
       ;; * CAUTION! If functions discover PROPERTY-KEYWORD is not a defined property, they silently do nothing.
 
-      (button {:style    style/uncolored-button-style
-               :onclick  (fn [e] (md/mswap! (evt-mx e) :counter inc))
-               :disabled (cF (mget me :maxxed-out?))}
-        {:name :counter
-         :counter     (cI 0)
-         :maxxed-out? (cF (>= (mget me :counter) 3))}
-        (str "I have been clicked "
-          (if (mget me :maxxed-out?) "enough" (mget me :counter))
-          " times."))
       )
     ))
 
 
 (defn mission-factory []
-  {:id        :cells-intro
-   :tab-label "Basic Cells"
-   :source    "cells_intro"
-   :objective "The Mission: baby steps with Matrix reactivity."
-   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Hello,-Cells"
-   :content   counter-cells})
+  {:id        :not-just-css
+   :tab-label "It's Not Just CSS"
+   :source    "css_unleashed"
+   :objective "The Mission: Reactive CSS."
+   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/CSS_Unleashed"
+   :content   not-just-css})
 
 ;;
 ;; ----------------------------------------------------------------

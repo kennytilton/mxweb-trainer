@@ -46,13 +46,13 @@
   ; - Add a handler to a displayed word that acts on the same history by navigating to it (omnipotence).
   ;
   []
-  (div {:style style/mission-style} {}
-    (div {:style (str style/column-center)}
+  (div {:style (style/mission-style)} {}
+    (div {:style (style/column-center)}
       (word-to-spell)
       (word-history))))
 
 (defn word-history []
-  (div {:style (str style/column-center ";padding:6px")}
+  (div {:style (style/column-center :padding "6px")}
 
     ; --- Mission part 2: Your code here ---
     ; display a column of words that have been entered:

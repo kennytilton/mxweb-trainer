@@ -1,42 +1,40 @@
-(ns mxweb-trainer.reusable.style)
+(ns mxweb-trainer.reusable.style
+  (:require
+    [tiltontec.mxweb.style :refer [make-css-inline style-string]]))
 
-(def mission-style
-  (str "display:flex"
-    ";flex-direction:column"
-    ";align-items:center"
-    ";align-content:center"
-    ";justify-content:center"
-    ";padding:3px"
-    ;;";background:pink"
-    ))
+(defn row-top [& override-keyvals]
+  (style-string (merge {:display        :flex
+                         :flex-direction :row
+                         :align-items    :top
+                         :align-content  :top}
+                  (apply hash-map override-keyvals))))
 
-(def row-top (str "display:flex"
-               ";flex-direction:row"
-               ";align-items:top"
-               ";align-content:top"
-               ";justify-content:center"
-               ";padding:3px"))
+(defn row-center [& override-keyvals]
+  (style-string (merge {:display        :flex
+                        :flex-direction :row
+                        :align-items    :center
+                        :align-content  :center
+                        :justify-content  :center}
+                  (apply hash-map override-keyvals))))
 
-(def row-center (str "display:flex"
-               ";flex-direction:row"
-               ";align-items:center"
-               ";align-content:center"
-               ";justify-content:center"
-               ";padding:3px"))
+(defn column-center [& override-keyvals]
+  (style-string (merge {:display        :flex
+                        :flex-direction :column
+                        :align-items    :center
+                        :align-content  :center
+                        :justify-content  :center}
+                  (apply hash-map override-keyvals))))
 
-(def column-left (str "display:flex"
-                   ";flex-direction:column"
-                   ";align-items:left"
-                   ";align-content:left"
-                   ";justify-content:center"
-                   ";padding:3px"))
+(defn column-left [& override-keyvals]
+  (style-string (merge {:display        :flex
+                        :flex-direction :column
+                        :align-items    :left
+                        :align-content  :left
+                        :justify-content  :left}
+                  (apply hash-map override-keyvals))))
 
-(def column-center (str "display:flex"
-                     ";flex-direction:column"
-                     ";align-items:center"
-                     ";align-content:center"
-                     ";justify-content:center"
-                     ";padding:3px"))
+(defn mission-style [& override-keyvals]
+  (apply column-center :padding "3px" override-keyvals))
 
 (def nice-button-style
   (str "background:#ea4c89"

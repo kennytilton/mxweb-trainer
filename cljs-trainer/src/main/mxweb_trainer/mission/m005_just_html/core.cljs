@@ -20,7 +20,7 @@
     :success true))
 
 (defn its-just-html []
-  (div {:style style/mission-style}
+  (div {:style (style/mission-style)}
     (span {:style "font-size:3em"}
       "Hello, Matrix")
 

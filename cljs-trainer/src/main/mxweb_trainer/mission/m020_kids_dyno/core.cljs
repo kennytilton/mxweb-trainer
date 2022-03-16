@@ -56,7 +56,7 @@
   ; such that the opening rendering will be "b - o - o - y - a -!"
   ;
   []
-  (div {:style style/mission-style} {}
+  (div {:style (style/mission-style)} {}
     (div {:style (str style/column-center)}
       (word-to-spell)
       ; -- Mission Part 1 --------------------------------------
@@ -65,7 +65,7 @@
       (word-history))))
 
 (defn word-spelling []
-  (div {:style (str style/column-center ";padding:6px")}
+  (div {:style (style/column-center :padding "6px")}
     (let [w (mget (fmu :word-to-spell) :value)]
       [(if (str/blank? w)
          "Waiting for you to type sth ^^^."
@@ -80,7 +80,7 @@
                         (str c))) (interpose "-" w)))])))
 
 (defn word-history []
-  (div {:style (str style/column-center ";padding:6px")}
+  (div {:style (style/column-center :padding "6px")}
     (b "History (click to delete)")
     ; --- Mission part 2: Your code here ---
     ; display a column of words that have been entered:

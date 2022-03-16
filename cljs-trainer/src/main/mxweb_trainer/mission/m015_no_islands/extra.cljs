@@ -46,9 +46,9 @@
 (defn mxt-secret [mx] (mget mx :secret))
 
 (defn render-data-tree [data-node]
-  (div {:style (str style/column-center ";padding:4px;background:white"
-                 (when (seq (md-kids data-node))
-                   ";border: thin outset linen; padding:18px"))}
+  (div {:style (cF (str (style/column-center :padding "4px" :background "white")
+                     (when (seq (md-kids data-node))
+                       ";border: thin outset linen; padding:18px")))}
     {:node data-node}                                       ;; link rendered tree back to data tree
     (span {:style (cF (let [color (mxt-color$ data-node)]
                         (str "margin:3px;padding:3px;font-size:1.5em"
@@ -60,6 +60,5 @@
         (when-let [s (mxt-secret data-node)]
           (str "=" s))))
     (when (seq (mget data-node :kids))
-      (div {:style (str style/row-top
-                     #_";border: thick outset linen; padding:18px")}
+      (div {:style (style/row-top)}
         (map #(render-data-tree %) (mget data-node :kids))))))
