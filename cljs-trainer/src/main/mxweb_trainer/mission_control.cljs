@@ -73,7 +73,7 @@
                           (dyno-k/mission-factory)          ;; :dyno-kids
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           ]
-     :current-mission-id (cI :trainer-welcome)                  ;;todo save in local storage
+     :current-mission-id (cI :not-just-css)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}

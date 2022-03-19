@@ -1,90 +1,63 @@
 (ns mxweb-trainer.mission.m012-not-just-css.core
   (:require [clojure.string :as str]
+            [tiltontec.cell.base :refer [mdead?]]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.model.core
-             :refer [matrix mx-par mget mget mset! mxu-find-name fmu] :as md]
+             :refer [matrix mx-par mget mget mset! mxu-find-name fmu fm! fmo] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [audio img input figure p a span div button br]]
+             :refer-macros [audio img input figure p a span div button br]
+             :as mxw]
             [tiltontec.mxweb.gen
-             :refer [make-tag dom-tag evt-mx target-value]]))
+             :refer [make-tag dom-tag evt-mx target-value]]
+            [mxweb-trainer.reusable.time :as timer]
+            [mxweb-trainer.reusable.style :as style]))
 
+;; todo with-tag-style macro
+;; todo with-tag macro
+;; mxweb tracing nil false true keyword [keywords] test
 (defn not-just-css []
-  (div {:style (str "display:flex"
-                 ";flex-direction:column"
-                 ";align-items:center"
-                 ";align-content:center"
-                 ";justify-content:center"
-                 ";padding:9px"
-                 ";background:pink")}
-    (span {:style "font-size:3em"}
+  (div {:style (style/column-center
+                 :padding "9px"
+                 :background :pink)}
+    {:tick   (cI false :ephemeral? true)
+     :ticker (let [jid (atom nil)]
+               ;; todo wrap all this up as a new mx-interval
+               (cFonce (reset! jid (js/setInterval
+                                     #(if (mdead? me)
+                                        (when-let [id @jid]
+                                          (js/clearInterval id)
+                                          (reset! jid nil))
+                                        (do (prn :ticking!!!)
+                                            (mset! me :tick true)))
+                                     5000))))}
+    (span {:style (cF (when (mget (mx-par me) :tick)
+                        (if (odd? (.getSeconds (js/Date.)))
+                          "color:blue;font-size: 24px;;line-height: 1.2em;"
+                          "color:red;font-size: 24px;;line-height: 1.2em;")))}
       "CSS Unleashed")
 
-    ; The state of a typical Matrix application is mostly derived/computed state, much as
-    ; a spreadsheet is mostly cells with formulas. Both of these require /some/ state to come
-    ; from outside the model: it cannot be derived state all the way down.
-    ;
-    ; In this example, the input required is the current time. We let the user click
-    ; a button to inject the current time into the DAG:
-    ;
-    (span {:style   (str "color:red"
-                      ";font-size: 64px"
-                      ";line-height: 1.2em")
-           :onclick (fn [e]
-                      ;   mset! is like cljs reset!. It can be called from anywhere, not just event handlers.
-                      ;   evt-mx takes an event and returns a matrix object, usually nicknamed 'mx',
-                      ;      which is the equivalent of JS 'this', viz,, the object that spawned the handler.
-                      (mset! (evt-mx e) :time-now (js/Date.)))
-           ; When one change requires another, a developer has three problems:
-           ;   1. what are all the things that need to be updated to reflect the original change;
-           ;   2. what updates are necessitated by the first round of updates,  andand recursively on;
-           ;   3. how to order updates to avoid reactive "glitches", when the DAG gets interesting.
-           ;
-           ; By expressing a property value as a function of other property values, we provide
-           ; Matrix with the information it needs to handle all three tasks transparently and
-           ; with optimal efficiency, glitch-free.
-           ;
-           ; `cF` is a mnemonic for `formula cell` or `ruled cell`. It expands to:
-           ;;   (make-c-formula
-           ;       :code '~body
-           ;       :value unbound
-           ;       :rule (c-fn ~@body))
-           ;
-           ; Soon after a Matrix object is instantiated and added to the larger tree, which we
-           ; colloquially call a matrix, each of its formulaic cells will have its rule executed to
-           ; establish its initial value.
-           ;
-           :content (cF (-> (mget me :time-now)
-                          .toTimeString
-                          (str/split " ")
-                          first))}
-      ;;
-      ;; The second map argument to an mxWeb tag function is for custom properties
-      ;; that real DIVs know nothing about, but which proxy DIVs can use to react dynamically to user actions.
-      ;; With these, we can get more re-use out of DIVs, because we do not need
-      ;; to get into OO issues forever subclassing.
-      ;;
-      ;; `cI` is a mnemonic for "input cell"
-      {:time-now (cI (js/Date.))})
+    (timer/clock (cF (when (mget me :tick)
+                       (if (even? (.getSeconds (js/Date.)))
+                       "color:blue;font-size: 64px;;line-height: 1.2em;"
+                       "color:red;font-size: 64px;;line-height: 1.2em;"))))
 
-    ; Here is the definition of cI:
-    ;  (defn cI [value & option-kvs]
-    ;    (apply make-cell
-    ;         :value value
-    ;         :input? true
-    ;         option-kvs))
-    ; Setting `:input?` to true lets us mutate that value imperatively, as in
-    ; the mset! we see in the onclick handler on the span above.
+    (span {:style (cF (when (mget me :tick)
+                        (if (even? (.getSeconds (js/Date.)))
+                          "color:blue;font-size: 32px;;line-height: 0.5em;"
+                          "color:red;font-size: 32px;;line-height: 0.5em;")))}
+      "Raw style string")
 
-    (span {:style "font-size:1.5em"}
-      "Click the time to have it updated.")
-    (p)
-
-
-    (div {:style (cF (str "font-size:" (+ 2 (* 0.5 (mod (mget me :counter) 3))) "em"
-                       ";min-height:72px;min-width:400px"
-                       ";text-align:center"))}
+    (div
       ;; --- your code here ---------
-      (span "Hi, Mom!")
+
+      (button {:style   style/uncolored-button-style
+               :onclick (fn [e] (md/mswap! (evt-mx e) :counter inc))}
+        {:name        :counter
+         :counter     (cI 0)
+         :maxxed-out? (cF (>= (mget me :counter) 3))}
+        (str "I have been clicked "
+          (mget me :counter)
+          " times."))
       ;; Replace this SPAN with a button meeting these requirements:
       ;; * the label is "I have been clicked N times.", where N is a counter of how many times it has been clicked;
       ;; * the counter must start at zero; and
@@ -119,7 +92,7 @@
    :tab-label "It's Not Just CSS"
    :source    "css_unleashed"
    :objective "The Mission: Reactive CSS."
-   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/CSS_Unleashed"
+   :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/CSS-Unleashed"
    :content   not-just-css})
 
 ;;

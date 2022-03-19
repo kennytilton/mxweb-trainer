@@ -11,25 +11,27 @@
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]))
 
-(defn clock []
-  (div {:class   "example-clock"
-        :style   "color:red;font-size: 64px;;line-height: 1.2em;"
-        :content (cF (if (mget me :tick)
-                       (-> (js/Date.)
-                         .toTimeString
-                         (str/split " ")
-                         first)
-                       "*checks watch*"))}
-    {:tick   (cI false :ephemeral? true)
-     :ticker (let [jid (atom nil)]
-               ;; todo wrap all this up as a new mx-interval
-               (cFonce (reset! jid (js/setInterval
-                                #(if (mdead? me)
-                                   (when-let [id @jid]
-                                     (js/clearInterval id)
-                                     (reset! jid nil))
-                                   (mset! me :tick true))
-                               1000))))}))
+(defn clock
+  ([] (clock "color:red;font-size: 64px;;line-height: 1.2em;"))
+  ([style]
+   (div {:class   "example-clock"
+         :style   style
+         :content (cF (if (mget me :tick)
+                        (-> (js/Date.)
+                          .toTimeString
+                          (str/split " ")
+                          first)
+                        "*checks watch*"))}
+     {:tick   (cI false :ephemeral? true)
+      :ticker (let [jid (atom nil)]
+                ;; todo wrap all this up as a new mx-interval
+                (cFonce (reset! jid (js/setInterval
+                                      #(if (mdead? me)
+                                         (when-let [id @jid]
+                                           (js/clearInterval id)
+                                           (reset! jid nil))
+                                         (mset! me :tick true))
+                                      3000))))})))
 
 ;; todo have cells throw exceptions on attempts to act on dead cells or models
 
