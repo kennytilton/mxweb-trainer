@@ -19,6 +19,7 @@
             [mxweb-trainer.mission.m015-no-islands.core :as no-islands]
             [mxweb-trainer.mission.m020-kids-dyno.core :as dyno-k]
             [mxweb-trainer.mission.m025-review.core :as review-1]
+            [mxweb-trainer.mission.m022-multi-matrix.core :as multi-mx]
             ))
 
 (defn mission-control-bar []
@@ -72,8 +73,9 @@
                           (no-islands/mission-factory)      ;; :no-island
                           (dyno-k/mission-factory)          ;; :dyno-kids
                           (review-1/mission-factory)        ;; :dyno-kids-history
+                          (multi-mx/mission-factory)        ;; :multi-mx
                           ]
-     :current-mission-id (cI :not-just-css)                  ;;todo save in local storage
+     :current-mission-id (cI :multi-mx)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}
