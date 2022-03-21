@@ -10,6 +10,21 @@
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]))
 
+(def +matrices+
+  "A map of matrix IDs to root matrices"
+  ;; a "matrix" is just a model without a parent
+  (atom {}))
+
+(defn matrix-register [mx]
+  (assert (nil? (mx-par mx)) "matrix-register given model with parent.")
+  (assert (mget mx :id) "matrix-register given matrix with nil? :id")
+  (prn :registering-mx (mget mx :id))
+  (swap! +matrices+ assoc (mget mx :id) mx)
+  mx)
+
+(defn matrix-get [id]
+  (get @+matrices+ id))
+
 (defn find-and-set
   "Return an event handler that will search up for a named mx model
   and set the given property to the given value"

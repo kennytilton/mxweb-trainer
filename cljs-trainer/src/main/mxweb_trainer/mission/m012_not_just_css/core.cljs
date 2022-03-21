@@ -17,7 +17,7 @@
 
 ;; todo with-tag-style macro
 ;; todo with-tag macro
-;; mxweb tracing nil false true keyword [keywords] test
+;; todo mxweb tracing nil false true keyword [keywords] test
 (defn not-just-css []
   (div {:style (style/column-center
                  :padding "9px"

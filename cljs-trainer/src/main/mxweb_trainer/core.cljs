@@ -10,6 +10,7 @@
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [tiltontec.mxweb.html :refer [tag-dom-create]]
+            [mxweb-trainer.util.helper :as helper]
             [mxweb-trainer.mission-control :as mc]))
 
 (enable-console-print!)
@@ -18,10 +19,12 @@
 (defn ^:dev/after-load start []
   (js/console.log "start")
   (let [root (dom/getElement "app")
-        app-matrix (md/make
+        app-matrix (helper/matrix-register
+                     (md/make
                      ::training
+                     :id :mx-trainer
                      :mx-dom (cFonce (md/with-par me
-                                       (mc/training-root))))
+                                       (mc/training-root)))))
         app-dom (tag-dom-create
                   (md/mget app-matrix :mx-dom))]
 

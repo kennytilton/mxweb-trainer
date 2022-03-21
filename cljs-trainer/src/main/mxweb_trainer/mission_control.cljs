@@ -20,7 +20,7 @@
             [mxweb-trainer.mission.m020-kids-dyno.core :as dyno-k]
             [mxweb-trainer.mission.m025-review.core :as review-1]
             [mxweb-trainer.mission.m022-multi-matrix.core :as multi-mx]
-            ))
+            [mxweb-trainer.app-debugger :as mx-debug]))
 
 (defn mission-control-bar []
   (div {:style (style/row-center
@@ -38,7 +38,8 @@
        (b {:style "color:white"} "Mission Control")
        (div (when wiki-url
               (a {:target "_blank"
-                  :href   wiki-url} "Help")))])))
+                  :href   wiki-url} "Help")))
+       (mx-debug/panel-install)])))
 
 (defn- mission-stack []
   (div {:style (style/column-center :justify-content "top")}
