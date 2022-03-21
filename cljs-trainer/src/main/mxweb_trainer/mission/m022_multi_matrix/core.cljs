@@ -17,7 +17,7 @@
     "Spell me: "
     (input {:name     :word-to-spell
             :tag/type "text"
-            :value    (cI "booya!"
+            :value    (cI "booya!!"
                         :obs (fn [slot me newv oldv c]
                                (prn :word-to-spell-is-now!!! newv)))
             :oninput  (fn [e]
@@ -47,6 +47,49 @@
        (div {:style (str style/row-center ";padding:6px")}
             (map (fn [c] (span {:style "font-size:2em; margin:3px"}
                            (str c))) (interpose "-" w)))])))
+
+#_#_
+(defn inject-mx [where what]
+  (let [root (dom/getElement where)
+        app-matrix (md/make
+                     ::training
+                     :mx-dom (cFonce (md/with-par me
+                                       (what))))
+        app-dom (tag-dom-create
+                  (md/mget app-matrix :mx-dom))]
+
+    (set! (.-innerHTML root) nil)
+    (dom/appendChild root app-dom)))
+
+(defn matrix-two []
+  (div {:style (style/column-center
+                 :padding "9px"
+                 :background :pink)}
+    {:tick   (cI false :ephemeral? true)
+     :ticker (let [jid (atom nil)]
+               ;; todo wrap all this up as a new mx-interval
+               (cFonce (reset! jid (js/setInterval
+                                     #(if (mdead? me)
+                                        (when-let [id @jid]
+                                          (js/clearInterval id)
+                                          (reset! jid nil))
+                                        (do (prn :ticking-two!!!)
+                                            (mset! me :tick true)))
+                                     3000))))}
+    (span {:style (cF (when (mget (mx-par me) :tick)
+                        (if (odd? (.getSeconds (js/Date.)))
+                          "color:blue;font-size: 24px;;line-height: 1.2em;"
+                          "color:red;font-size: 24px;;line-height: 1.2em;")))}
+      "CSS Unleashed Two")
+    (button {:style   (str style/uncolored-button-style ";margin-top:24px")
+             :onclick (fn [e] (inject-mx "app2" matrix-two))}
+      {:name        :counter
+       :counter     (cI -2)
+       :maxxed-out? (cF (>= (mget me :counter) 3))}
+      (str "I have been clicked "
+        (mget me :counter)
+        " times."))))
+
 (defn dyno-kids
   []
   (div {:style (style/mission-style)} {}

@@ -9,6 +9,9 @@
              :as mxw]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
+
+            [tiltontec.mxweb.html :refer [tag-dom-create]]
+
             [mxweb-trainer.reusable.time :as timer]
             [mxweb-trainer.reusable.style :as style]))
 
