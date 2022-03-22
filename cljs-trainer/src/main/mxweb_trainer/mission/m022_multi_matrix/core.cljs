@@ -44,8 +44,9 @@
                           (if (str/blank? w)
                             "Waiting for you to type sth ^^^."
                             (str "The word \"" w "\"&nbspis spelled&nbsp...<i>thinking</i>..."))))})
-    (div {:style (str style/row-center ";padding:6px")}
-      {:name :spelling}
+    (div {:style (cF (str style/row-center ";padding:6px" (mget me :xstyle)))}
+      {:name :spelling
+       :xstyle (cI ";background:cyan")}
       (let [w (mget (fmu :word-to-spell) :value)]
         (prn :rebuilding!!!!!!-spelling!!! w)
         (map (fn [c] (span {:style "font-size:2em; margin:3px"}
@@ -82,7 +83,7 @@
       (word-to-spell)
       ; -- Mission Part 1 --------------------------------------
       (word-spelling))
-    (app-debugger)))
+    #_ (app-debugger)))
 
 (defn mission-factory []
   {:id        :multi-mx

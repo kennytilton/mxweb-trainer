@@ -55,6 +55,7 @@
   (div {:style (style/column-left :width "100%")}
     (mission-control-bar)
     (div {:style "color:black"}
+      {:name :msn-socket}
       (let [m (mget (md/fasc :training me) :current-mission)]
         [(h2 {:style "font-size:1.5em;text-align:center"}
            (:title m))
