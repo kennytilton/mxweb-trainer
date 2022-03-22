@@ -52,29 +52,6 @@
         (map (fn [c] (span {:style "font-size:2em; margin:3px"}
                        (str c))) (interpose "-" w))))))
 
-(defn app-debugger []
-  #_ (div {:style style/mission-style}
-    (h3 "Your debugger")
-    (div {:style (style/column-center
-                   :padding "9px"
-                   :background :pink)}
-      {:target (cF (prn :seeking-spelling!!!!!!!!)
-                 (when-let [sp (md/fget :spelling me
-                                 :up? true
-                                 :inside? true
-                                 :must? true
-                                 :wocd? false
-                                 )]
-                   (prn :bam-got-spelling!!!!)
-                   sp))}
-      (span {:content (cF (if-let [tgt (mget (mx-par me) :target)]
-                            (let [kids (mget tgt :kids)]
-                              (do
-                                (prn :content-depender cells/*depender*)
-                                (str "got sp with kid count "
-                                  (count kids))))
-                            (span "no target yet")))}))))
-
 (defn dyno-kids
   []
   (div {:id    :dyno-kids
@@ -82,8 +59,7 @@
     (div {:style (str style/column-center)}
       (word-to-spell)
       ; -- Mission Part 1 --------------------------------------
-      (word-spelling))
-    #_ (app-debugger)))
+      (word-spelling))))
 
 (defn mission-factory []
   {:id        :multi-mx

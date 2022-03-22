@@ -1,6 +1,7 @@
 (ns mxweb-trainer.app-debugger
   (:require [clojure.string :as str]
             [goog.dom :as dom]
+            [tiltontec.cell.evaluate :refer [not-to-be]]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.cell.base :refer-macros [without-c-dependency] :as cells]
             [tiltontec.model.core
@@ -16,43 +17,64 @@
 (defn inject-mx [where what]
   (let [root (dom/getElement where)
         _ (assert root (str "inject-mx cannot find target with ID <" where ">"))
-        app-matrix (md/make
-                     ::training
-                     :mx-dom (cFonce (md/with-par me
-                                       (what))))
+        app-matrix (helper/matrix-register
+                     (md/make
+                       ::training
+                       :id :mx-debugger
+                       :mx-dom (cFonce (md/with-par me
+                                         (what)))))
         app-dom (tag-dom-create
-                  (md/mget app-matrix :mx-dom))
-        inject? (str/blank? (.-innerHTML root))]
+                  (md/mget app-matrix :mx-dom))]
     ;; (prn :debug-inner!!!!!!!! inject? (.-innerHTML root) )
     (set! (.-innerHTML root) nil)
-    (when inject?
-      (dom/appendChild root app-dom))))
+    (dom/appendChild root app-dom)))
+
+(defn toggle-mx [where what]
+  (let [root (dom/getElement where)
+        _ (assert root (str "inject-mx cannot find target with ID <" where ">"))]
+    (if (str/blank? (.-innerHTML root))
+      (inject-mx where what)
+      (let [mx-debugger (helper/matrix-get :mx-debugger)]
+        (set! (.-innerHTML root) nil)
+        (helper/matrix-deregister mx-debugger)
+        (not-to-be (md/mget mx-debugger :mx-dom))))))
 
 (defn dom-tree [mx]
-  (div {:style (style/column-center :padding "6px")}
-    {:target mx}
-    (span {:content (cF (str "dom:" (or (mget mx :name)
-                                      (mget mx :id)
-                                      "anon")))
-           :onclick (fn [e]
-                      (let [me (evt-mx e)
-                            tgt (mget (mx-par me) :target)]
-                        (assert me "no evtmx")
-                        (assert tgt "no tgt")
-                        (md/mset! tgt :xstyle ";background:yellow")))})
-    #_(doall (for [k (md/md-kids me)]
-               (dom-tree k)))
-    ;;(span (str "kids " (count (md-kids mx))))
-    (div {:style (style/row-top :border "thin outset")}
-      (doall (map (fn [mx]
-                    (dom-tree mx)
-                    #_(span {:content (cF (str "kid:" (or (mget mx :name)
-                                                        (mget mx :id)
-                                                        "anon")))}))
-               (md/md-kids mx))))))
+  (if (string? mx)
+    (span {:style   "background:white;padding:4px"
+           :content mx})
+    (div {:style (style/column-center :padding "6px"
+                   :border "thin inset"
+                   :background "cyan"
+                   )}
+      {:target mx}
+      (span {:style   "padding:9px"
+             :content (cF (str "" (or (mget mx :name)
+                                    (mget mx :id)
+                                    (mget mx :content)
+                                    "anon")))
+             :onclick (fn [e]
+                        (let [me (evt-mx e)
+                              tgt (mget (mx-par me) :target)]
+                          (assert me "no evtmx")
+                          (assert tgt "no tgt")
+                          (md/mset! tgt :xstyle ";background:yellow")))})
+      (when-not (seq (md/md-kids mx))
+        (prn :no-kids-for mx)
+        nil)
+      (when (seq (md/md-kids mx))
+        (div {:style (style/row-top :border "thin outset"
+                       :justify-content "top"
+                       :background "linen")}
+          (doall (map (fn [mx]
+                        (dom-tree mx)
+                        #_(span {:content (cF (str "kid:" (or (mget mx :name)
+                                                            (mget mx :id)
+                                                            "anon")))}))
+                   (md/md-kids mx))))))))
 
 (defn app-debugger []
-  (div {:style style/mission-style}
+  (div {:style (style/mission-style)}
     (h2 "debug panel")
     (div {:style (style/column-left
                    :padding "9px"
@@ -68,5 +90,5 @@
       (dom-tree (mget me :target)))))
 
 (defn panel-install []
-  (div {:onclick (fn [e] (inject-mx "app-debugger" app-debugger))}
+  (div {:onclick (fn [e] (toggle-mx "app-debugger" app-debugger))}
     "Debug"))

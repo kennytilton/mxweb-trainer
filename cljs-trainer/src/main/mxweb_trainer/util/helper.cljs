@@ -22,6 +22,14 @@
   (swap! +matrices+ assoc (mget mx :id) mx)
   mx)
 
+(defn matrix-deregister [mx]
+  (assert (nil? (mx-par mx)) "matrix-deregister given model with parent.")
+  (assert (mget mx :id) "matrix-deregister given matrix with nil? :id")
+  (prn :de-registering-mx (mget mx :id))
+  (swap! +matrices+ dissoc (mget mx :id))
+  (prn :remining-matrices (keys @+matrices+))
+  mx)
+
 (defn matrix-get [id]
   (get @+matrices+ id))
 
