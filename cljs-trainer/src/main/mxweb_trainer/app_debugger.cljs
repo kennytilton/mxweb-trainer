@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [goog.dom :as dom]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
-            [tiltontec.cell.base :refer-macros [without-c-dependency]]
+            [tiltontec.cell.base :refer-macros [without-c-dependency] :as cells]
             [tiltontec.model.core
              :refer [matrix fget mx-par mget mget mset! mxu-find-name fmu md-kids] :as md]
             [tiltontec.mxweb.gen-macro
@@ -27,17 +27,23 @@
     (dom/appendChild root app-dom)))
 
 (defn app-debugger []
-  (div {:style (style/column-center
-                 :padding "9px"
-                 :background :pink)}
-    {:target (cF (let [omx (helper/matrix-get :mx-trainer)]
-                   (assert omx)
-                   (prn :bam-omx (md/mget omx :mx-dom))
-                   (let [sp (fget :spelling (md/mget omx :mx-dom) :inside? true)]
-                     (assert sp)
-                     (prn :bam-spelling sp)
-                     sp)))}
-    (span "got sp")))
+  (div {:style style/mission-style}
+    (h2 "debug panel")
+    (div {:style (style/column-center
+                   :padding "9px"
+                   :background :pink)}
+      {:target (cF (let [omx (helper/matrix-get :mx-trainer)]
+                     (assert omx)
+                     ; (prn :bam-omx (md/mget omx :mx-dom))
+                     (let [sp (fget :spelling (md/mget omx :mx-dom) :inside? true)]
+                       (assert sp)
+                       ;(prn :bam-spelling sp)
+                       sp)))}
+      (span {:content (cF (let [tgt (mget (mx-par me) :target)]
+                            (prn :content-target tgt)
+                            (prn :content-depender cells/*depender*)
+                            (str "got sp with kid count "
+                              (count (mget tgt :kids)))))}))))
 
 (defn panel-install []
   (div {:onclick (fn [e] (inject-mx "app-debugger" app-debugger))}

@@ -1,14 +1,15 @@
 (ns mxweb-trainer.mission.m022-multi-matrix.core
   (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
-            [tiltontec.cell.base :refer-macros [without-c-dependency]]
+            [tiltontec.cell.base :refer-macros [without-c-dependency] :as cells]
             [tiltontec.model.core
              :refer [matrix mx-par mget mget mset! mxu-find-name fmu md-kids] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [h1 h2 audio img input figure p a b span div button br]]
+             :refer-macros [h1 h2 h3 img input figure p a b span div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.reusable.style :as style]
+            [mxweb-trainer.util.helper :as helper]
             [mxweb-trainer.mission.m015-no-islands.extra
              :refer [target-toggle mx-tree render-data-tree] :as extra]))
 
@@ -18,7 +19,7 @@
     "Spell me: "
     (input {:name     :word-to-spell
             :tag/type "text"
-            :value    (cI "booya!!"
+            :value    (cI "abc"
                         :obs (fn [slot me newv oldv c]
                                (prn :word-to-spell-is-now!!! newv)))
             :oninput  (fn [e]
@@ -39,16 +40,39 @@
 
 (defn word-spelling []
   (div {:style (style/column-center :padding "6px")}
-    (let [w (mget (fmu :word-to-spell) :value)]
-      [(if (str/blank? w)
-         "Waiting for you to type sth ^^^."
-         [(span (str "The word \"" w "\""))
-          nil [nil nil]
-          [(span "&nbspis spelled&nbsp...<i>thinking</i>...")]])
-       (div {:style (str style/row-center ";padding:6px")}
-         {:name :spelling}
-         (map (fn [c] (span {:style "font-size:2em; margin:3px"}
-                        (str c))) (interpose "-" w)))])))
+    (span {:content (cF (let [w (mget (fmu :word-to-spell) :value)]
+                          (if (str/blank? w)
+                            "Waiting for you to type sth ^^^."
+                            (str "The word \"" w "\"&nbspis spelled&nbsp...<i>thinking</i>..."))))})
+    (div {:style (str style/row-center ";padding:6px")}
+      {:name :spelling}
+      (let [w (mget (fmu :word-to-spell) :value)]
+        (prn :rebuilding!!!!!!-spelling!!! w)
+        (map (fn [c] (span {:style "font-size:2em; margin:3px"}
+                       (str c))) (interpose "-" w))))))
+
+(defn app-debugger []
+  #_ (div {:style style/mission-style}
+    (h3 "Your debugger")
+    (div {:style (style/column-center
+                   :padding "9px"
+                   :background :pink)}
+      {:target (cF (prn :seeking-spelling!!!!!!!!)
+                 (when-let [sp (md/fget :spelling me
+                                 :up? true
+                                 :inside? true
+                                 :must? true
+                                 :wocd? false
+                                 )]
+                   (prn :bam-got-spelling!!!!)
+                   sp))}
+      (span {:content (cF (if-let [tgt (mget (mx-par me) :target)]
+                            (let [kids (mget tgt :kids)]
+                              (do
+                                (prn :content-depender cells/*depender*)
+                                (str "got sp with kid count "
+                                  (count kids))))
+                            (span "no target yet")))}))))
 
 (defn dyno-kids
   []
@@ -57,7 +81,8 @@
     (div {:style (str style/column-center)}
       (word-to-spell)
       ; -- Mission Part 1 --------------------------------------
-      (word-spelling))))
+      (word-spelling))
+    (app-debugger)))
 
 (defn mission-factory []
   {:id        :multi-mx
