@@ -24,7 +24,6 @@
                         "*checks watch*"))}
      {:tick   (cI false :ephemeral? true)
       :ticker (let [jid (atom nil)]
-                ;; todo wrap all this up as a new mx-interval
                 (cFonce (reset! jid (js/setInterval
                                       #(if (mdead? me)
                                          (when-let [id @jid]

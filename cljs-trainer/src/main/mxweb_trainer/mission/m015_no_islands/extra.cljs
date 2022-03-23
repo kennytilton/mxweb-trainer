@@ -3,7 +3,6 @@
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.cell.base :refer-macros [without-c-dependency]]
             [tiltontec.model.core
-             ;; todo lose md- prefix on kids %a
              :refer [matrix mx-par mget mget mset! mxu-find-name fmu md-kids] :as md]
             [tiltontec.mxweb.gen-macro
              :refer-macros [h1 h2 audio img input figure p a span div button br]]

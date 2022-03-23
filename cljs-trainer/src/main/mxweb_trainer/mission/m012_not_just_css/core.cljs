@@ -11,6 +11,7 @@
              :refer [make-tag dom-tag evt-mx target-value]]
 
             [tiltontec.mxweb.html :refer [tag-dom-create]]
+            [tiltontec.mxweb.style :refer [make-css-inline style-string]]
 
             [mxweb-trainer.reusable.time :as timer]
             [mxweb-trainer.reusable.style :as style]))
@@ -33,22 +34,37 @@
                                         (do (prn :ticking!!!)
                                             (mset! me :tick true)))
                                      5000))))}
-    (span {:style (cF (when (mget (mx-par me) :tick)
-                        (if (odd? (.getSeconds (js/Date.)))
-                          "color:blue;font-size: 24px;;line-height: 1.2em;"
-                          "color:red;font-size: 24px;;line-height: 1.2em;")))}
+    (p {:style "color:gray;font-size: 24px;;line-height: 1.2em;"}
       "CSS Unleashed")
 
-    (timer/clock (cF (when (mget me :tick)
-                       (if (even? (.getSeconds (js/Date.)))
-                       "color:blue;font-size: 64px;;line-height: 1.2em;"
-                       "color:red;font-size: 64px;;line-height: 1.2em;"))))
-
-    (span {:style (cF (when (mget me :tick)
-                        (if (even? (.getSeconds (js/Date.)))
-                          "color:blue;font-size: 32px;;line-height: 0.5em;"
-                          "color:red;font-size: 32px;;line-height: 0.5em;")))}
+    (p {:style (cF (when (mget (mx-par me) :tick)
+                     (str (if (even? (.getSeconds (js/Date.)))
+                            "color:blue;" "color:red;")
+                       "background:cyan;font-size:32px;line-height:2em;")))}
       "Raw style string")
+
+    (p {:style (cF (when (mget (mx-par me) :tick)
+                     (style-string
+                       (merge {:font-size   "32px"
+                               :line-height "1.5em"}
+                         (if (even? (.getSeconds (js/Date.)))
+                           {:background :black
+                            :color      :red}
+                           {:background :red
+                            :color      :white})))))}
+      "Full style map")
+
+    (p {:style (cFonce (make-css-inline me
+                         ::font-size   "32px"
+                         :line-height "1.5em"
+                         :background (cF (when (mget (mx-par me) :tick)
+                                                 (if (even? (.getSeconds (js/Date.)))
+                                                   :black :red)))
+                         :color (cF (when (mget (mx-par me) :tick)
+                                      (if (even? (.getSeconds (js/Date.)))
+                                        :red :white)))))}
+      "mxWeb CSS Style Object")
+
 
     (div
       ;; --- your code here ---------

@@ -73,9 +73,6 @@
                                   :onclick (fn [e]
                                              (let [me (evt-mx e)
                                                    ew (fmu :word-to-spell)]
-                                               ;; todo do we have kid1 defined?
-                                               ; (defn mswap! [me slot swap-fn & swap-fn-args]
-                                               ;  (mset! me slot (apply swap-fn (mget me slot) swap-fn-args)))
                                                (md/mswap! ew :entered-words
                                                  (fn [words]
                                                    (remove #{(first (mget me :kids))} words)))))}
