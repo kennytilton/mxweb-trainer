@@ -66,6 +66,6 @@
    :tab-label "MX Multiverse"
    :source    "m022_multi_matrix"
    :title     "MX Multi"
-   :objective "Stress testing multiple MXes."
+   :objective "Stress testing multiple MXes. Click \"Debug\" in toolbar to add a separate MX faux debugger."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/MX-Multiverse"
    :content   dyno-kids})

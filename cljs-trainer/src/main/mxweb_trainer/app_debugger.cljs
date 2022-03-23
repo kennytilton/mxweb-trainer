@@ -14,6 +14,8 @@
             [mxweb-trainer.reusable.style :as style]
             [mxweb-trainer.util.helper :as helper]))
 
+;;; a lot of code here should be in mxWeb. RSN.
+
 (defn inject-mx [where what]
   (let [root (dom/getElement where)
         _ (assert root (str "inject-mx cannot find target with ID <" where ">"))
@@ -59,18 +61,12 @@
                           (assert me "no evtmx")
                           (assert tgt "no tgt")
                           (md/mset! tgt :xstyle ";background:yellow")))})
-      (when-not (seq (md/md-kids mx))
-        (prn :no-kids-for mx)
-        nil)
       (when (seq (md/md-kids mx))
         (div {:style (style/row-top :border "thin outset"
                        :justify-content "top"
                        :background "linen")}
           (doall (map (fn [mx]
-                        (dom-tree mx)
-                        #_(span {:content (cF (str "kid:" (or (mget mx :name)
-                                                            (mget mx :id)
-                                                            "anon")))}))
+                        (dom-tree mx))
                    (md/md-kids mx))))))))
 
 (defn app-debugger []
