@@ -74,8 +74,8 @@
                           (not-just-css/mission-factory)    ;; :not-just-css
                           (no-islands/mission-factory)      ;; :no-island
                           (dyno-k/mission-factory)          ;; :dyno-kids
-                          (review-1/mission-factory)        ;; :dyno-kids-history
                           (multi-mx/mission-factory)        ;; :multi-mx
+                          (review-1/mission-factory)        ;; :dyno-kids-history
                           ]
      :current-mission-id (cI :multi-mx)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
