@@ -1,7 +1,7 @@
 (ns mxweb-trainer.mission.m012-not-just-css.core
   (:require [clojure.string :as str]
             [tiltontec.cell.base :refer [mdead?]]
-            [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
+            [tiltontec.cell.core :refer-macros [cF cFonce cFn cF1] :refer [cI]]
             [tiltontec.model.core
              :refer [matrix mx-par mget mget mset! mxu-find-name fmu fm! fmo] :as md]
             [tiltontec.mxweb.gen-macro
@@ -31,79 +31,41 @@
                                         (when-let [id @jid]
                                           (js/clearInterval id)
                                           (reset! jid nil))
-                                        (do (prn :ticking!!!)
-                                            (mset! me :tick true)))
-                                     5000))))}
-    (p {:style "color:gray;font-size: 24px;;line-height: 1.2em;"}
+                                        (mset! me :tick true))
+                                     3000))))}
+    (timer/clock 100)
+    (p {:style "color:gray; font-size:24px; line-height: 1.2em;"}
       "CSS Unleashed")
 
-    (p {:style (cF (when (mget (mx-par me) :tick)
+    #_ (p {:style (cF (when (mget (mx-par me) :tick)
                      (str (if (even? (.getSeconds (js/Date.)))
                             "color:blue;" "color:red;")
                        "background:cyan;font-size:32px;line-height:2em;")))}
-      "Raw style string")
+      "Reactive style string")
 
-    (p {:style (cF (when (mget (mx-par me) :tick)
-                     (style-string
-                       (merge {:font-size   "32px"
-                               :line-height "1.5em"}
-                         (if (even? (.getSeconds (js/Date.)))
-                           {:background :black
-                            :color      :red}
-                           {:background :red
-                            :color      :white})))))}
-      "Full style map")
+    #_ (p {:style (cF (do (mget (mx-par me) :tick)
+                       (style-string
+                         (merge {:font-size   "32px"
+                                 :line-height "1.5em"}
+                           (if (even? (.getSeconds (js/Date.)))
+                             {:background :black
+                              :color      :red}
+                             {:background :red
+                              :color      :white})))))}
+      "Reactive style map -> style-string")
 
-    (p {:style (cFonce (make-css-inline me
-                         ::font-size   "32px"
-                         :line-height "1.5em"
-                         :background (cF (when (mget (mx-par me) :tick)
-                                                 (if (even? (.getSeconds (js/Date.)))
-                                                   :black :red)))
-                         :color (cF (when (mget (mx-par me) :tick)
-                                      (if (even? (.getSeconds (js/Date.)))
-                                        :red :white)))))}
-      "mxWeb CSS Style Object")
-
-
-    (div
-      ;; --- your code here ---------
-
-      (button {:style   style/uncolored-button-style
-               :onclick (fn [e] (md/mswap! (evt-mx e) :counter inc))}
-        {:name        :counter
-         :counter     (cI 0)
-         :maxxed-out? (cF (>= (mget me :counter) 3))}
-        (str "I have been clicked "
-          (mget me :counter)
-          " times."))
-      ;; Replace this SPAN with a button meeting these requirements:
-      ;; * the label is "I have been clicked N times.", where N is a counter of how many times it has been clicked;
-      ;; * the counter must start at zero; and
-      ;; * when the counter gets to three:
-      ;; ** change the message to "I have been clicked enough times."; and
-      ;; ** disable the button using the DOM.
-
-      (br)
-
-      ;; hints for writing your code. You will want:
-      ;; * a custom input property for the counter, initialized to zero;
-      ;; * a button label computed with the counter value plus some fixed text like "The count is now NNN";
-      ;; * a standard HTML attribute `onclick` handler that uses mswap! to increment the counter;
-      ;; * and a standard HTML attribute `disabled` that goes to CLJS true when the counter reaches 3.
-      ;;
-      ;; tips:
-      ;; * use cI to define input cells, cF to define computed cells;
-      ;; * HTML attributes such as `disabled` do not take values, their presence indicates "true". With mxWeb, we use
-      ;;   truthiness to make such attributes present or not present.
-      ;; * in the event handler, used `(evt-mx the-event)` to get the mx instance hosting the handler.
-      ;; * in formulas, just use the anaphoric `me` as if it were `this` or `self`
-      ;; * use `(mget MX PROPERTY-KEYWORD)` to get a value;
-      ;; * use `(mset! MX PROPERTY-KEYWORD VALUE)` or `(mswap! MX PROPERTY-VALUE FN ARGS*)` to mutate input cells.
-      ;; * CAUTION! If functions discover PROPERTY-KEYWORD is not a defined property, they silently do nothing.
-
-      )
-    ))
+    #_ (p {:style (cF1 (let [tag-par (mx-par me)]
+                      (make-css-inline me
+                        :font-size (cF (prn :fontsize-cache cache)
+                                     "18px")
+                        :line-height "1.5em"
+                        :background (cF (let [secs (.getSeconds (js/Date.))
+                                              tick (mget tag-par :tick)]
+                                          (if (even? secs) :black :red)))
+                        :color (cF (let [tick (mget tag-par :tick)]
+                                     (if (even? (.getSeconds (js/Date.)))
+                                       :white :black))))))}
+      "mxWeb CSS Style Object, separate reactive style properties")))
 
 
 (defn mission-factory []

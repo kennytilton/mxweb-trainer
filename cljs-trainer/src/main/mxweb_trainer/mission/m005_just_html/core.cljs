@@ -25,7 +25,7 @@
       "Hello, Matrix")
 
     (span "The time is now...")
-    (timer/clock)
+    (timer/clock 100)
     (extra/mi-dum-dum)
     ;;
     ;; 0. Add a button

@@ -43,6 +43,7 @@
 
 (defn- mission-stack []
   (div {:style (style/column-center :justify-content "top")}
+    {:name :msn-stack}
     (b "Missions")
     (map (fn [m]
            (button {:style   (str "margin:9px;width:96px;border:none;background:khaki")
@@ -77,7 +78,7 @@
                           (multi-mx/mission-factory)        ;; :multi-mx
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           ]
-     :current-mission-id (cI :not-just-css)                  ;;todo save in local storage
+     :current-mission-id (cI #_ :just-html :not-just-css #_ :trainer-welcome)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}
@@ -93,8 +94,12 @@
         :flex-direction :row
         :align-items    :top
         :align-content  :top}
-    (div {:style (style/row-top)
-          #_ (str "display:flex"
+    (div {:style #_ (style/row-top)
+          #_ {:display        :flex
+              :flex-direction :row
+              :align-items    :top
+              :align-content  :top}
+          (str "display:flex"
                    ";flex-direction:row"
                    ";align-items:top"
                    ;; ";background:yellow"

@@ -1,6 +1,7 @@
 (ns mxweb-trainer.reusable.time
   (:require [goog.dom :as dom]
             [clojure.string :as str]
+            [cljs.pprint :as pp]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.cell.base :refer [mdead?]]
             [tiltontec.model.core
@@ -12,15 +13,24 @@
              :refer [make-tag dom-tag evt-mx target-value]]))
 
 (defn clock
-  ([] (clock "color:red;font-size: 64px;;line-height: 1.2em;"))
-  ([style]
+  ([]
+   (clock 1000 "color:red;font-size: 64px;;line-height: 1.2em;"))
+  ([update-interval-ms]
+   (clock update-interval-ms "color:red;font-size: 64px;;line-height: 1.2em;"))
+  ([update-interval-ms style]
    (div {:class   "example-clock"
          :style   style
          :content (cF (if (mget me :tick)
-                        (-> (js/Date.)
-                          .toTimeString
-                          (str/split " ")
-                          first)
+                        (let [d (js/Date.)]
+                          (str (-> d
+                                 .toTimeString
+                                 ;.toISOString
+                                 (str/split " ")
+                                 first
+                                 )
+                            "."
+                            (* 1 (Math/floor (/ (.getMilliseconds d) 100)))
+                            #_ (pp/cl-format nil "~03,'0d" (* 100 (Math/floor (/ (.getMilliseconds d) 100))))))
                         "*checks watch*"))}
      {:tick   (cI false :ephemeral? true)
       :ticker (let [jid (atom nil)]
@@ -30,7 +40,7 @@
                                            (js/clearInterval id)
                                            (reset! jid nil))
                                          (mset! me :tick true))
-                                      3000))))})))
+                                      update-interval-ms))))})))
 
 ;; todo have cells throw exceptions on attempts to act on dead cells or models
 
