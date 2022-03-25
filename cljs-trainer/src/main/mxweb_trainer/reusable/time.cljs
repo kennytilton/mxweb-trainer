@@ -14,33 +14,42 @@
 
 (defn clock
   ([]
-   (clock 1000 "color:red;font-size: 64px;;line-height: 1.2em;"))
+   (clock 1000))
   ([update-interval-ms]
-   (clock update-interval-ms "color:red;font-size: 64px;;line-height: 1.2em;"))
+   (clock update-interval-ms "color:hsl(120,100%,50%);font-size: 64px;;line-height: 1.2em;"))
   ([update-interval-ms style]
    (div {:class   "example-clock"
-         :style   style
-         :content (cF (if (mget me :tick)
-                        (let [d (js/Date.)]
-                          (str (-> d
-                                 .toTimeString
-                                 ;.toISOString
-                                 (str/split " ")
-                                 first
-                                 )
-                            "."
-                            (* 1 (Math/floor (/ (.getMilliseconds d) 100)))
-                            #_ (pp/cl-format nil "~03,'0d" (* 100 (Math/floor (/ (.getMilliseconds d) 100))))))
+         :style   (cF (let [d (mget me :tick-time)
+                            secs (Math/floor (.getSeconds d)) ;; 0 - 5
+                            tenths (Math/floor (/ (.getMilliseconds d) 100))
+                            degrees (+ (* secs 36) (Math/floor (/ 36 tenths)))
+                            time-style-format "color:hsl(~d,100%,50%);font-size: 64px;;line-height: 1.2em;"]
+                        ; (prn :deg degrees :s secs :tenths tenths)
+                        (prn :secs secs)
+                        (pp/cl-format nil time-style-format (+ (* secs 36)
+                                                              (* tenths 3.6)))))
+         :content (cF (if-let [d (mget me :tick-time)]
+                        (str (-> d
+                               .toTimeString
+                               ;.toISOString
+                               (str/split " ")
+                               first
+                               )
+                          "."
+                          (* 1 (Math/floor (/ (.getMilliseconds d) 100)))
+                          #_ (pp/cl-format nil "~03,'0d" (* 100 (Math/floor (/ (.getMilliseconds d) 100)))))
                         "*checks watch*"))}
-     {:tick   (cI false :ephemeral? true)
-      :ticker (let [jid (atom nil)]
+     {:ticker (let [jid (atom nil)]
                 (cFonce (reset! jid (js/setInterval
                                       #(if (mdead? me)
                                          (when-let [id @jid]
                                            (js/clearInterval id)
                                            (reset! jid nil))
                                          (mset! me :tick true))
-                                      update-interval-ms))))})))
+                                      update-interval-ms))))
+      :tick   (cI false :ephemeral? true)
+      :tick-time (cF (let [_ (mget me :tick)] ;; just need to be triggered, and get initial value even before first tick
+                       (js/Date.)))})))
 
 ;; todo have cells throw exceptions on attempts to act on dead cells or models
 
