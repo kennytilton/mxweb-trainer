@@ -45,10 +45,15 @@
   (div {:style (style/column-center :justify-content "top")}
     {:name :msn-stack}
     (b "Missions")
-    (map (fn [m]
+    #_ (map (fn [m]
            (button {:style   (str "margin:9px;width:96px;border:none;background:khaki")
-                    :onclick (fn [e] (mset! (md/fasc :training me) :current-mission-id
-                                       (:id m)))}
+                    :onclick (fn [e]
+                               (let [emx (evt-mx e)]
+                                 (prn :emx emx)
+                                 (let [trn (md/fasc :training me)]
+                                   (prn :trn trn)
+                                   (mset! trn :current-mission-id
+                                       (:id m)))))}
              (:tab-label m (name (:id m)))))
       (mget (md/fasc :training me) :missions))))
 

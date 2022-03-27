@@ -48,7 +48,6 @@
       {:name :spelling
        :xstyle (cI ";background:cyan")}
       (let [w (mget (fmu :word-to-spell) :value)]
-        (prn :rebuilding!!!!!!-spelling!!! w)
         (map (fn [c] (span {:style "font-size:2em; margin:3px"}
                        (str c))) (interpose "-" w))))))
 

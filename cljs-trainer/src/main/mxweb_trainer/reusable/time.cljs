@@ -18,26 +18,18 @@
   ([update-interval-ms]
    (clock update-interval-ms "color:hsl(120,100%,50%);font-size: 64px;;line-height: 1.2em;"))
   ([update-interval-ms style]
+   ;; todo have mxWeb look for a not-to-be property that can clean
+   (prn :building-clock)
    (div {:class   "example-clock"
-         :style   (cF (let [d (mget me :tick-time)
-                            secs (Math/floor (.getSeconds d)) ;; 0 - 5
-                            tenths (Math/floor (/ (.getMilliseconds d) 100))
-                            degrees (+ (* secs 36) (Math/floor (/ 36 tenths)))
-                            time-style-format "color:hsl(~d,100%,50%);font-size: 64px;;line-height: 1.2em;"]
-                        ; (prn :deg degrees :s secs :tenths tenths)
-                        (prn :secs secs)
-                        (pp/cl-format nil time-style-format (+ (* secs 36)
-                                                              (* tenths 3.6)))))
-         :content (cF (if-let [d (mget me :tick-time)]
+         :style   style
+         :content "hunh" #_ (cF (if-let [d (mget me :tick-time)]
                         (str (-> d
                                .toTimeString
                                ;.toISOString
                                (str/split " ")
                                first
                                )
-                          "."
-                          (* 1 (Math/floor (/ (.getMilliseconds d) 100)))
-                          #_ (pp/cl-format nil "~03,'0d" (* 100 (Math/floor (/ (.getMilliseconds d) 100)))))
+                          "." (* 1 (Math/floor (/ (.getMilliseconds d) 100))))
                         "*checks watch*"))}
      {:ticker (let [jid (atom nil)]
                 (cFonce (reset! jid (js/setInterval

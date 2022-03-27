@@ -57,3 +57,6 @@
     ";padding: 10px 16px"
     ";transition: color 100ms"
     ";border-radius:8px;border-style:none"))
+
+(defn hex-string-to-int [xx]
+  (js/parseInt xx 16))

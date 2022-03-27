@@ -1,17 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="/css/main.css">
-  <title>mxWeb Trainer</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/main.css">
+    <title>mxWeb Trainer</title>
+    <style>
+      div.col-row-switcher {
+        display:         flex;
+        align-items:     center;
+        align-content:   center
+        justify-content: center;
+        background:      white;
+        justify-content: center;
+
+        min-height: 3em;
+        min-width: 7em;
+        font-size: 1.5em;
+      }
+      div.row {
+        flex-direction:  row;
+      }
+      div.col {
+        flex-direction:  column;
+      }
+    </style>
 </head>
 <body>
 <noscript>You need to enable JavaScript to run this app.</noscript>
-  <!-- div id="app0">APP ZERO!!!</div -->
-  <div id="app"></div>
-  <div id="app-debugger"></div>
+<!-- div id="app0">APP ZERO!!!</div -->
+<div id="app"></div>
+<div id="app-debugger"></div>
 <script src="/js/main.js"></script>
 </body>
 </html>

@@ -27,7 +27,6 @@
                                        (mc/training-root)))))
         app-dom (tag-dom-create
                   (md/mget app-matrix :mx-dom))]
-
     (set! (.-innerHTML root) nil)
     (dom/appendChild root app-dom)))
 
