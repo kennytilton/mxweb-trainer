@@ -98,6 +98,7 @@
                           ]
      :current-mission-id (cI #_ :just-html
                            #_ :dyno-kids
+                           ;;:not-just-css ;;
                            :callback-heaven
                            #_ :cells-intro)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
