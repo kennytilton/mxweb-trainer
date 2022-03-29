@@ -18,6 +18,7 @@
             [mxweb-trainer.mission.m012-not-just-css.core :as not-just-css]
             [mxweb-trainer.mission.m015-no-islands.core :as no-islands]
             [mxweb-trainer.mission.m020-kids-dyno.core :as dyno-k]
+            [mxweb-trainer.mission.m022-callback-heaven.core :as heaven]
             [mxweb-trainer.mission.m025-review.core :as review-1]
             [mxweb-trainer.mission.m091-multi-matrix.core :as multi-mx]
             [mxweb-trainer.app-debugger :as mx-debug]))
@@ -91,12 +92,13 @@
                           (not-just-css/mission-factory)    ;; :not-just-css
                           (no-islands/mission-factory)      ;; :no-island
                           (dyno-k/mission-factory)          ;; :dyno-kids
+                          (heaven/mission-factory)          ;; :callback-heaven
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           (multi-mx/mission-factory)        ;; :multi-mx
                           ]
      :current-mission-id (cI #_ :just-html
-                           :dyno-kids
-                           #_ :trainer-welcome
+                           #_ :dyno-kids
+                           :callback-heaven
                            #_ :cells-intro)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
