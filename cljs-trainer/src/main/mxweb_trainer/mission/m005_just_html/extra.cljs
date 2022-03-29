@@ -19,6 +19,6 @@
     (when (md/mget me :success)
       (audio {:src      "/audio/mi-dum-dum.mp3"
               :controls true
-              :loop     false
+              :loop     true
               :onplay   (fn [e] (prn :onplay-sees e))
               :autoplay true}))))

@@ -18,21 +18,25 @@
 (defn mission-factory []
   {:id        :trainer-welcome
    :tab-label "Welcome"
-   :objective "Welcome to the mxWeb Trainer"
-   :source "welcome"
+   :source    "m000_welcome.cljs "
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki"
    :content   welcome})
 
 (defn welcome []
-  (div {:style (str "display:flex"
-                 ";color:black"
-                 ";flex-direction:column"
-                 ";align-items:left"
-                 ";align-content:left"
-                 ";justify-content:left"
-                 ";padding:12px"
-                 ";margin:36px"
-                 ";background:#fee")}
+  (div {:style
+        ;; later we will see more powerful ways of handling CSS.
+        ;; See "It's Not Just CSS"
+        (str "display:flex"
+          ";background:white"
+          ";color:black"
+          ";flex-direction:column"
+          ";align-items:left"
+          ";align-content:left"
+          ";justify-content:left"
+          ";padding:12px"
+          ";max-width:40em"
+          ";margin:36px"
+          )}
 
     (p {}
       "<i>mxWeb</i> is a declarative, lightweight HTML/CSS library powered by the "
@@ -55,5 +59,5 @@
       (li "a relevant working example;")
       (li "a link to the mission source; and")
       (li "a link to a Help page to guide your efforts."))
-    (p "Please click \"next\" to tackle the first mission.")))
+    (p "Please click \"It's Just HTML\" to tackle the first mission.")))
 

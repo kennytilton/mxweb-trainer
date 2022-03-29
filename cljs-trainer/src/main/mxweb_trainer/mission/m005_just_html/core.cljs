@@ -24,7 +24,7 @@
     (span {:style "font-size:3em"}
       "Hello, Matrix")
 
-    (span "The time is now...")
+    (p "The time is now...")
     (timer/clock 100)
     (extra/mi-dum-dum)
     ;;
@@ -37,7 +37,7 @@
     ;; OK, go for it!
     ;;
     ;; -----------------------------
-    ;; --- your button code here ---
+    ;; --- your code here ----------
     ;; -----------------------------
     ;;
     ;; Stuck? Come visit @kennytilton in the #matrix channel of Clojurians
@@ -46,7 +46,7 @@
 (defn mission-factory []
   {:id :just-html
    :tab-label "It's Just HTML"
-   :source "its_just_html"
+   :source "m005_just_html/core.cljs"
    :objective "Objective: mxWeb is just reactive HTML/CSS."
-   :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki/It's-Just-HTML-CSS"
+   :wiki-url "https://github.com/kennytilton/mxweb-trainer/wiki/It's-Just-HTML-and-CSS"
    :content its-just-html})

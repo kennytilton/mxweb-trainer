@@ -34,7 +34,7 @@
                                           (js/clearInterval id)
                                           (reset! jid nil))
                                         (mset! me :tick true))
-                                     3000))))}
+                                     5000))))}
     ;
     ; It /is/ just CSS, tbh, but reactive CSS, making dynamic CSS just another part of the app.
     ;
@@ -68,10 +68,11 @@
     ;; Editing/building style strings is clumsy and error prone.
     ;; Here we code a map and convert to a style string with the utility 'style-string'.
     ;; Note that the map varies reactively.
-    (p {:style (cF (let [_ (mget (mx-par me) :tick)]
+    (span {:style (cF (let [_ (mget (mx-par me) :tick)]
                      (style-string
-                       (merge {:font-size   "24px"
-                               :line-height "1.5em"}
+                       (merge {:font-size   "18px"
+                               :line-height "1em"
+                               :padding "4px"}
                          (if (even? (.getSeconds (js/Date.)))
                            {:background :black
                             :color      :red}
@@ -138,8 +139,8 @@
 (defn mission-factory []
   {:id        :not-just-css
    :tab-label "It's Not Just CSS"
-   :source    "css_unleashed"
-   :objective "The Mission: Reactive CSS."
+   :source    "m012_not_just_css/core.cljs"
+   :objective "The Mission: Reactive CSS co-located with your component."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/CSS-Unleashed"
    :content   not-just-css})
 

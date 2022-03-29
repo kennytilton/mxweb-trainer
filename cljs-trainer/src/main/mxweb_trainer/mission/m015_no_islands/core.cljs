@@ -82,7 +82,7 @@
       (fn [me] nil))
 
     (target-toggle cb-vermillion "vermillion"
-      ;; find the second child of `m`e`
+      ;; find the second child of `me``
       (fn [me] nil))
     (target-toggle cb-yellow "yellow"
       ;; find the parent of `me`
@@ -105,7 +105,7 @@
   ;
   []
   ;; First, we define an abstract state tree from which we will generate
-  ;; an isomorphic tree of Matrix models:
+  ;; a matching tree of Matrix models:
   (let [data-tree (mx-tree [:app nil nil
                             [:toolbar nil nil
                              [:trash cb-orange nil]]
@@ -116,6 +116,8 @@
                               :k1 [:k2 cb-vermillion] :k3]
                              [:next-sibling cb-black nil
                               [:k1 cb-bluish-green 42] :k2 :k3]]])]
+    ;; nb: this ^^^ is the tree we will be navigating!
+    ;;
     ;; Next, we build our GUI, with state togglers (your mission)
     ;; and a visual rendering of the state tree to help you think about
     ;; the navigations you will need to implement:
@@ -129,8 +131,8 @@
 (defn mission-factory []
   {:id        :no-island
    :tab-label "No Islands"
-   :source    "m015_no_islands"
+   :source    "m015_no_islands/core.cljs"
    :title     "No Widget Is An Island"
-   :objective "Your Mission: global, scoped Matrix tree navigation."
+   :objective "Your Mission: global, scoped Matrix tree navigation. No widget is an island."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/No-Widget-Is-An-Island"
    :content   no-islands})

@@ -5,7 +5,7 @@
             [tiltontec.model.core
              :refer [matrix mx-par mget mget mset! mxu-find-name fmu md-kids] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [h1 h2 audio img input figure p a b span div button br]]
+             :refer-macros [h1 h2 h3 audio img input figure p a b i span div button br]]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [mxweb-trainer.reusable.style :as style]
@@ -16,11 +16,17 @@
   (div {:class "color-input"}
     "Spell me: "
     (input {:name     :word-to-spell
+            :style    {:margin-left "9px" :padding "6px"}
             :tag/type "text"
             :value    (cI "booya!"
+                        ;; for not particular reason, we include a sneak preview of
+                        ;; the Matrix observer mechanism for state change side effects
                         :obs (fn [slot me newv oldv c]
                                (prn :word-to-spell-is-now!!! newv)))
             :oninput  (fn [e]
+                        ;; we want to display the faux spelling dynamically even before
+                        ;; the user enters the word, so we propagate on the `input` event, which
+                        ;; fires on every edit action.
                         (mset! (evt-mx e)
                           :value (target-value e)))
             ;
@@ -33,8 +39,13 @@
                           (when-not (or (str/blank? new-word)
                                       (some #{new-word} (mget me :entered-words)))
                             (md/mswap! me :entered-words conj new-word))))}
-      {:entered-words (cI nil :obs (fn [slot me newv oldv c]
-                                     (prn :entered-words!!!!! newv)))})))
+      {:entered-words (cI nil
+                        :obs (fn [slot me newv oldv c]
+                               ;; again no reason for this observer, except perhaps as
+                               ;; a temporary testing aid so one can check the 'onchange' is working
+                               ;; note that this file fire also if we implement deletion in the
+                               ;; second part of Mission II
+                               (prn :entered-words!!!!! newv)))})))
 
 ;;; we like to read source top-down
 (declare word-spelling word-history)
@@ -67,21 +78,29 @@
 (defn word-spelling []
   (div {:style (style/column-center :padding "6px")}
     (let [w (mget (fmu :word-to-spell) :value)]
-      [(if (str/blank? w)
-         "Waiting for you to type sth ^^^."
-         [(span (str "The word \"" w "\""))
-          nil [nil nil]
-          [(span "&nbspis spelled&nbsp...<i>thinking</i>...")]])
-       ;;; --- Mission part 1: Your code here ------
-       ;;; show a row of spans, one per letter in the current value of :word-to-spell
-       (span "<i>(Your code here #1.)</i>")
-       #_ (div {:style (str style/row-center ";padding:6px")}
-         (map (fn [c] (span {:style "font-size:2em; margin:3px"}
-                        (str c))) (interpose "-" w)))])))
+      (if (str/blank? w)
+        "Waiting for you to type sth ^^^."
+        (div {:style (style/column-center)}
+          (div {:style (style/row-center)}
+            (span (str "The word \"" w "\""))
+            ;; next is a quick demo that proxy DOM lists get flattened and cleaned of nils
+            nil [nil nil]
+            (span "&nbspis spelled&nbsp...<i>thinking</i>..."))
+          ;; --- Mission #1: Faux spelling ------
+          ;; show a row of spans, one per letter in the current value of :word-to-spell
+          ;; extra credit: interleave hyphens to convey thinking
+          ;; -----------------------------
+          ;; --- your code here ----------
+          ;; -----------------------------
+          #_(div {:style (str style/row-center ";padding:6px")}
+              (map (fn [c] (span {:style "font-size:2em; margin:3px"}
+                             (str c))) (interpose "-" w))))))))
 
 (defn word-history []
-  (div {:style (style/column-center :padding "6px")}
-    (b "History (click to delete)")
+  (div {:style (style/column-center :padding "6px" :border "thin dotted #000")}
+    (b {:style "font-size: 1.5em"}
+      "History")
+    (i "Click a word to delete it.")
     ; --- Mission part 2: Your code here ---
     ; display a column of words that have been entered:
     ; - modify input widget :word-to-spell to have a new property called :entered-words
@@ -92,28 +111,23 @@
     ; - add an "onclick" handler each history span to delete a word from the original history :entered-words
     ; -- Pro tip: the span word string can be retrieved as `(first (mget me :kids))` where `me` is the span
     (let [word-history (mget (fmu :word-to-spell) :entered-words)]
-      (if (seq word-history)
-        ;; a more advanced topic is how to avoid rebuilding the
-        ;; whole DOM list on each change. See Matrix "family values".
-        (span "<i>(Your code here #2.)</i>")
-        #_ (map (fn [word] (span {:style   "font-size:2em; margin:3px"
-                               :onclick (fn [e]
-                                          (let [me (evt-mx e)
-                                                ew (fmu :word-to-spell)]
-                                            ;; todo do we have kid1 defined?
-                                            ; (defn mswap! [me slot swap-fn & swap-fn-args]
-                                            ;  (mset! me slot (apply swap-fn (mget me slot) swap-fn-args)))
-                                            (md/mswap! ew :entered-words
-                                              (fn [words]
-                                                (remove #{(first (mget me :kids))} words)))))}
-                          word)) word-history)
-        (span "Entered, changed words appear here. Change \"booya!\" and hit Enter to see this.")))))
+      (div {:style (style/column-left
+                     :padding "6px"
+                     :margin-top "9px")}
+        (if (seq word-history)
+          ;; a more advanced topic is how to avoid rebuilding the
+          ;; whole DOM list on each change. See Matrix "family values".
+          ;; -----------------------------
+          ;; --- your code here ----------
+          ;; -----------------------------
+          "Your history here"
+          (span "Entered/changed words appear here. (Change \"booya!\" and hit 'Enter' to try it out.)"))))))
 
 (defn mission-factory []
   {:id        :dyno-kids
    :tab-label "Kids Dynomite"
-   :source    "m020_kids_dyno"
+   :source    "m020_kids_dyno/core.cljs"
    :title     "Dynamic Kids"
-   :objective "Your Mission: build a GUI row of letters."
+   :objective "Missions #1 and #2: dynamic reactive content."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Kids-Dyno-Mite"
    :content   dyno-kids})

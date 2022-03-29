@@ -82,7 +82,7 @@
 (defn mission-factory []
   {:id        :dyno-kids-history
    :tab-label "Review One"
-   :source    "m025_review"
+   :source    "m025_review/core.cljs"
    :title     "Mid-term Review One"
    :objective "Your Mission: maintain a word history display."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Review-One:-Word-History"

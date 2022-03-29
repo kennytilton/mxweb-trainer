@@ -116,15 +116,10 @@
       ;; * use `(mset! MX PROPERTY-KEYWORD VALUE)` or `(mswap! MX PROPERTY-VALUE FN ARGS*)` to mutate input cells.
       ;; * CAUTION! If functions discover PROPERTY-KEYWORD is not a defined property, they silently do nothing.
 
-      (button {:style    style/uncolored-button-style
-               :onclick  (fn [e] (md/mswap! (evt-mx e) :counter inc))
-               :disabled (cF (mget me :maxxed-out?))}
-        {:name :counter
-         :counter     (cI 0)
-         :maxxed-out? (cF (>= (mget me :counter) 3))}
-        (str "I have been clicked "
-          (if (mget me :maxxed-out?) "enough" (mget me :counter))
-          " times."))
+      ;; -----------------------------
+      ;; --- your code here ----------
+      ;; -----------------------------
+
       )
     ))
 
@@ -132,7 +127,7 @@
 (defn mission-factory []
   {:id        :cells-intro
    :tab-label "Basic Cells"
-   :source    "cells_intro"
+   :source    "m010_cells_intro/core.cljs"
    :objective "The Mission: baby steps with Matrix reactivity."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Hello,-Cells"
    :content   counter-cells})

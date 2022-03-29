@@ -19,7 +19,7 @@
             [mxweb-trainer.mission.m015-no-islands.core :as no-islands]
             [mxweb-trainer.mission.m020-kids-dyno.core :as dyno-k]
             [mxweb-trainer.mission.m025-review.core :as review-1]
-            [mxweb-trainer.mission.m022-multi-matrix.core :as multi-mx]
+            [mxweb-trainer.mission.m091-multi-matrix.core :as multi-mx]
             [mxweb-trainer.app-debugger :as mx-debug]))
 
 (defn mission-control-bar []
@@ -33,7 +33,7 @@
       ;; todo styling for the toolbar elements
       [(div (when source
               (a {:target "_blank"
-                  :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/" source ".cljs")}
+                  :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/" source)}
                 "Source")))
        (b {:style "color:white"} "Mission Control")
        (div (when wiki-url
@@ -42,31 +42,42 @@
        (mx-debug/panel-install)])))
 
 (defn- mission-stack []
-  (div {:style (style/column-center :justify-content "top")}
+  (div {:style (style/column-center
+                 :justify-content "top"
+                 :background "red")}
     {:name :msn-stack}
-    (b "Missions")
-    #_ (map (fn [m]
-           (button {:style   (str "margin:9px;width:96px;border:none;background:khaki")
+    (b {:style {:background :black
+                :color :white
+                :width "96px"
+                :text-align :center
+                :padding "2px"
+                :margin "2px"}}
+        "Missions")
+    (map (fn [m]
+           (button {:style   {:margin "9px"
+                              :width "96px"
+                              :border-radius "5px"
+                              :border "thin solid #f88"
+                              :background "#f44"}
                     :onclick (fn [e]
-                               (let [emx (evt-mx e)]
-                                 (prn :emx emx)
-                                 (let [trn (md/fasc :training me)]
-                                   (prn :trn trn)
-                                   (mset! trn :current-mission-id
-                                       (:id m)))))}
+                               (let [trn (md/fasc :training (evt-mx e))]
+                                 (mset! trn :current-mission-id
+                                   (:id m))))}
              (:tab-label m (name (:id m)))))
       (mget (md/fasc :training me) :missions))))
 
 (defn- mission-workspace []
   (div {:style (style/column-left :width "100%")}
     (mission-control-bar)
-    (div {:style "color:black"}
+    (div {:style (style/column-center
+                   :background "#ecfdfe"
+                   :color "black")}
       {:name :msn-socket}
       (let [m (mget (md/fasc :training me) :current-mission)]
-        [(h2 {:style "font-size:1.5em;text-align:center"}
-           (:title m))
-         (p {:style "font-size:1em;text-align:center"}
-           (:objective m))
+        [(span {:style "font-size:1.5em;margin-top:9px;text-align:center"}
+           (:tab-label m))
+         (when-let [obj (:objective m)]
+           (p {:style "font-size:1em;text-align:center"} obj))
          ((:content m))]))))
 
 (defn training-root []
@@ -80,10 +91,13 @@
                           (not-just-css/mission-factory)    ;; :not-just-css
                           (no-islands/mission-factory)      ;; :no-island
                           (dyno-k/mission-factory)          ;; :dyno-kids
-                          (multi-mx/mission-factory)        ;; :multi-mx
                           (review-1/mission-factory)        ;; :dyno-kids-history
+                          (multi-mx/mission-factory)        ;; :multi-mx
                           ]
-     :current-mission-id (cI #_ :just-html :not-just-css #_ :trainer-welcome)                  ;;todo save in local storage
+     :current-mission-id (cI #_ :just-html
+                           :dyno-kids
+                           #_ :trainer-welcome
+                           #_ :cells-intro)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}
@@ -95,21 +109,13 @@
             :alt   "The Matrix logo, a cell culture Petri dish"
             :style "height:96px"}))
 
-    #_ {:display        :flex
-        :flex-direction :row
-        :align-items    :top
-        :align-content  :top}
-    (div {:style #_ (style/row-top)
-          #_ {:display        :flex
-              :flex-direction :row
-              :align-items    :top
-              :align-content  :top}
-          (str "display:flex"
-                   ";flex-direction:row"
-                   ";align-items:top"
-                   ;; ";background:yellow"
-                   ";align-content:top"
-                   ";padding:0px")}
+    (defn row-top [& override-keyvals]
+      (style-string (merge {:display        :flex
+                            :flex-direction :row
+                            :align-items    :top
+                            :align-content  :top}
+                      (apply hash-map override-keyvals))))
+    (div {:style (style/row-top)}
       (mission-stack)
       (mission-workspace))))
 

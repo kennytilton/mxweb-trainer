@@ -71,7 +71,7 @@
 
 (defn app-debugger []
   (div {:style (style/mission-style)}
-    (h2 "debug panel")
+    (h2 "(fake) debug panel")
     (div {:style (style/column-left
                    :padding "9px"
                    :background :pink)}

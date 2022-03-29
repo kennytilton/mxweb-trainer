@@ -1,4 +1,4 @@
-(ns mxweb-trainer.mission.m022-multi-matrix.core
+(ns mxweb-trainer.mission.m091-multi-matrix.core
   (:require [clojure.string :as str]
             [tiltontec.cell.core :refer-macros [cF cFonce] :refer [cI]]
             [tiltontec.cell.base :refer-macros [without-c-dependency] :as cells]
@@ -63,7 +63,7 @@
 (defn mission-factory []
   {:id        :multi-mx
    :tab-label "MX Multiverse"
-   :source    "m022_multi_matrix"
+   :source    "m091_multi_matrix/core.cljs"
    :title     "MX Multi"
    :objective "Stress testing multiple MXes. Click \"Debug\" in toolbar to add a separate MX faux debugger."
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/MX-Multiverse"

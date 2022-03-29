@@ -18,17 +18,15 @@
   ([update-interval-ms]
    (clock update-interval-ms "color:hsl(120,100%,50%);font-size: 64px;;line-height: 1.2em;"))
   ([update-interval-ms style]
-   ;; todo have mxWeb look for a not-to-be property that can clean
+   ;; todo have mxWeb look for a not-to-be property that can clean up timers
    (prn :building-clock)
    (div {:class   "example-clock"
          :style   style
-         :content "hunh" #_ (cF (if-let [d (mget me :tick-time)]
+         :content (cF (if-let [d (mget me :tick-time)]
                         (str (-> d
                                .toTimeString
-                               ;.toISOString
                                (str/split " ")
-                               first
-                               )
+                               first)
                           "." (* 1 (Math/floor (/ (.getMilliseconds d) 100))))
                         "*checks watch*"))}
      {:ticker (let [jid (atom nil)]
