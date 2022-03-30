@@ -58,8 +58,6 @@
              :onclick (fn [e]
                         (let [me (evt-mx e)
                               tgt (mget (mx-par me) :target)]
-                          (assert me "no evtmx")
-                          (assert tgt "no tgt")
                           (md/mset! tgt :xstyle ";background:yellow")))})
       (when (seq (md/md-kids mx))
         (div {:style (style/row-top :border "thin outset"
@@ -77,14 +75,10 @@
                    :background :pink)}
       {:target (cF (let [omx (helper/matrix-get :mx-trainer)]
                      (assert omx)
-                     (fget :msn-socket (md/mget omx :mx-dom) :inside? true :must? true)
-                     ; (prn :bam-omx (md/mget omx :mx-dom))
-                     #_(let [sp (fget :spelling (md/mget omx :mx-dom) :inside? true)]
-                         (assert sp)
-                         ;(prn :bam-spelling sp)
-                         sp)))}
+                     (fget :msn-socket (md/mget omx :mx-dom) :inside? true :must? true)))}
       (dom-tree (mget me :target)))))
 
 (defn panel-install []
-  (div {:onclick (fn [e] (toggle-mx "app-debugger" app-debugger))}
+  (div {:style {:color "#fee"}
+        :onclick (fn [e] (toggle-mx "app-debugger" app-debugger))}
     "Debug"))

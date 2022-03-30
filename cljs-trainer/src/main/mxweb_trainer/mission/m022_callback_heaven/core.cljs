@@ -12,6 +12,7 @@
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
             [tiltontec.mxweb.html :refer [mxu-find-class]]
+            [tiltontec.mxweb.style :refer [make-css-inline style-string]]
             [mxweb-trainer.reusable.style :as style]
             [mxweb-trainer.mission.m015-no-islands.extra
              :refer [target-toggle mx-tree render-data-tree] :as extra]
@@ -26,91 +27,135 @@
 (defn de-whitespace [s]
   (str/replace s #"\s" ""))
 
-(def ae-by-brand "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:~(~a~)&limit=3")
+(def ae-by-brand "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:~(~a~)&limit=~d")
 
+;[:patient
+;   {:patientonsetage "62",
+;    :patientonsetageunit "801",
+;    :patientweight "66.67",
+;    :patientsex "2",
+;    :reaction
+;    [{:reactionmeddraversionpt "17.0",
+;      :reactionmeddrapt "Nausea",
+;      :reactionoutcome "1"}
+;     {:reactionmeddraversionpt "17.0",
+;      :reactionmeddrapt "Chills",
+;      :reactionoutcome "2"}
+;     {:reactionmeddraversionpt "17.0",
+;      :reactionmeddrapt "Abdominal pain",
+;      :reactionoutcome "2"}
+;     {:reactionmeddraversionpt "17.0",
+;      :reactionmeddrapt "Headache",
+;      :reactionoutcome "2"}],
+;    :drug
+;    [{:drugstartdate "20130308",
+;      :drugstructuredosageunit "003",
+;      :drugstructuredosagenumb "20",
+;      :actiondrug "5",
+;      :medicinalproduct "JAKAFI",
+;      :drugcharacterization "1",
+;      :drugadministrationroute "048",
+;      :openfda xx]]
 
-(defn drug-to-lookup []
+(defn result-digest [r]
+  (let [p (:patient r)]
+    {:received       (:receivedate r)
+     :patient-age    (:patientonsetage p)
+     :patient-weight (:patientweight p)
+     :reactions      (map :reactionmeddrapt (get p :reaction))
+     :drugs          (map :medicinalproduct (:drug p))
+     }))
+
+(defn drug-name-to-lookup []
   (div {:class "color-input"}
-    "Spell me: "
-    (input {:name     :drug-name
-            :style    {:margin-left "9px" :padding "6px"}
-            :tag/type "text"
-            :value    (cI "")
-            :oninput  (fn [e]
-                        ;; we want to display the faux spelling dynamically even before
-                        ;; the user enters the word, so we propagate on the `input` event, which
-                        ;; fires on every edit action.
-                        #_ ;; on the fly lookup
-                        (mset! (evt-mx e)
-                          :value (target-value e)))
-            ;
-            ; Mission Part II: --- your code here ---
-            ;  - an onchange handler to check for new words and if so....
-            ;  - conj it onto a new :entered-words vector
-            :onchange (fn [e]
-                        (mset! (evt-mx e) :value (target-value e)))}
-      {:ae (cF (let [drug-name (mget me :value)]
-                 ;; (when (mget (mxu-find-class me "ae-autocheck") :on?)
-                 (when-not (str/blank? drug-name)
-                   (prn :url (pp/cl-format nil ae-by-brand
-                               (js/encodeURIComponent drug-name)))
-                   (make-xhr (pp/cl-format nil ae-by-brand
-                               (js/encodeURIComponent drug-name))
-                     {:name name :send? true}))))
-       :ae-response (cF+ [:obs (fn-obs
-                                 (when new
-                                   (println :new-ae-response!!! new)))]
-                     (when-let [lookup (mget me :ae)]
-                       (prn :wait-on-lookup!!!!!!!! lookup)
-                       (xhr-response lookup)))
-       })))
+    "Drug name: "
+    (input {:name      :drug-name
+            :style     {:margin-left "9px"
+                        :padding     "6px"}
+            :tag/type  "text"
+            :value     (cI "")
+            :autofocus true
+            #_#_:oninput
+                ;; enable this for continuous lookup.
+                ;; but then ^^ we should look at cancelling "in-flight" XHRs
+                (fn [e]
+                  (mset! (evt-mx e)
+                    :value (target-value e)))
+            :onchange  (fn [e]
+                         ;; we move the DOM target-value to the Matrix
+                         (mset! (evt-mx e) :value (target-value e)))}
 
-#_
-(defn ae-explorer [rx]
-  (button {:class   "li-show"
-           :style   (cF (str "display:"
-                          (or (when-let [xhr (mget me :ae)]
-                                (prn :bam-got-xhr!!!!!!!! xhr)
-                                (let [aes (xhr-response xhr)]
-                                  (when (= 200 (:status aes))
-                                    (prn :aes-found-200! aes)
-                                    "block")))
-                            "none")))
-           :onclick #(js/alert "Feature not yet implemented.")}
+      ;; --- solution outline -----------------
+      ;; - create one custom property to "compute" an AJAX lookup
+      ;    ; - you can create /and/ send an XHR lookup of 5 max adverse events aspirin using
+      ;    ;     (make-xhr (pp/cl-format nil ae-by-brand
+      ;    ;                  (js/encodeURIComponent "aspirin") 5)
+      ;    ;        {:name "aspirin" :send? true})
+      ;    ; - that ^^ returns a reactive Matrix model object with one reactive property `response`, where
+      ;    ;   the actual response will be deposited via `mset!`, triggering dataflow to any dependents.
+      ;    ; - you should arrange for that lookup to be sent each time the :drug-name widget takes on a new :value
+      ;; - create a second custom property to hold the parse response once it is received
+      ;    ; -
 
-    {:ae (cF+ [:obs (fn-obs
-                      (when-not (or (= old unbound) (nil? old))
-                        (not-to-be old))
-                      (println :new-ae? new))]
-           (when (mget (mxu-find-class me "ae-autocheck") :on?)
-             (prn :auto-check-on!!!!!!!!)
-             (println :ae-auto-check! (rx-title rx))
-             (println :url (pp/cl-format nil ae-by-brand
-                             (js/encodeURIComponent (rx-title rx))))
-             (make-xhr (pp/cl-format nil ae-by-brand
-                         (js/encodeURIComponent (rx-title rx)))
-               {:name name :send? true})))
-     :aeresponse (cF+ [:obs (fn-obs
-                              (println :newresponse new))]
-                   (when-let [lookup (mget me :ae)]
-                     (prn :lookup!!!!!!!! lookup)
-                     (xhr-response lookup)))
-     }
+      {:ae-lookup                                           ;; tips:
+                    (cF (let [drug-name (mget me :value)]
+                          ;; (when (mget (mxu-find-class me "ae-autocheck") :on?)
+                          (when-not (str/blank? drug-name)
+                            #_(prn :ae-lookup-url (pp/cl-format nil ae-by-brand
+                                                    (js/encodeURIComponent drug-name) 5))
+                            (make-xhr (pp/cl-format nil ae-by-brand
+                                        (js/encodeURIComponent drug-name) 5)
+                              {:name drug-name :send? true}))))
+       :ae-response (cF+ [:obs
+                          ;; `fn-obs` expands to (fn [~'slot ~'me ~'new ~'old ~'c]...]...
+                          ;; so we can look around quite a bit, including the internals `cell` object
+                          ;; that mediates this slot of this instance.
+                          ;; We used this observer in anger while developing this exercise to sort out
+                          ;; the structure of the service responses.
+                          (fn-obs
+                            (when new
+                              (binding [*print-level* 4]
+                                (pp/pprint [:results (map result-digest (get-in new [:body :results]))]))))]
+                      ;; todo have mget insist on property existing, or make an mget! version
+                      (when-let [lookup (mget me :ae-lookup)]
+                        (xhr-response lookup)))})))
 
-    (span {:style "font-size:0.7em;margin:2px;margin-top:0;vertical-align:top"}
-      "View Adverse Events")))
+(defn build-ae-viewer [result]
+  (span {:style {:margin-bottom "1em"}}
+    (str/join ", " (:reactions result))))
 
 (defn callback-heaven
   []
-  (div {:style (style/mission-style)} {}
-    (div {:style (str style/column-center)}
-      (drug-to-lookup))))
+  (div {:style (style/column-center :background "#fff" :padding "9px" :gap "1em")}
+    (span {:style {:font-size "2em"}} "Bogus Adverse Event Lookup Tool")
+
+    (drug-name-to-lookup)
+
+    (div {:style (style/column-center
+                   :max-width "400px")}
+      (let [ae-response (mget (fmu :drug-name) :ae-response)]
+        [(h3 {:content (cF (when ae-response
+                             (if (= 200 (:status ae-response))
+                               "Adverse Events"
+                               "No adverse events reported to NIH")))})
+         ;;; --- your code here --------------------------------------
+         ;;; emulate the h3 code ^^ to conditionally generate DOM to minimally display
+         ;;; the results of any successful lookup. Some tips:
+         ;;; - retrieve all adverse events with `(get-in ae-response [:body :results])`
+         ;;; - extract an adverse event digest with fn `result-digest`.
+         (when ae-response
+           (div {:style (style/column-left)}
+             (i {:style {:margin-bottom "1em"}}
+               "Disclaimer: Do <i>not</i> let results scare you. They are misleading!")
+             (when (= 200 (:status ae-response))
+               (mapv build-ae-viewer
+                 (map result-digest (get-in ae-response [:body :results]))))))]))))
 
 (defn mission-factory []
   {:id        :callback-heaven
    :tab-label "Callback Heaven"
    :source    "m022_callback_heaven/core.cljs"
-   :title     "Dynamic Kids"
-   :objective "Mission: Graceful synchronous XHR"
+   :title     "Callback Heaven"
+   :objective "Mission: Graceful asynchronous XHR"
    :wiki-url  "https://github.com/kennytilton/mxweb-trainer/wiki/Callback-Heaven"
    :content   callback-heaven})

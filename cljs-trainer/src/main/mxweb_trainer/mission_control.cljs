@@ -23,22 +23,27 @@
             [mxweb-trainer.mission.m091-multi-matrix.core :as multi-mx]
             [mxweb-trainer.app-debugger :as mx-debug]))
 
+(def cb-text-color "#fee")
+
 (defn mission-control-bar []
   (div {:style (style/row-center
                  :background :red
                  :width "100%"
                  :justify-content :space-around
+                 :color cb-text-color
                  :padding "3px")}
     (let [training (fmu :training)
           {:keys [source wiki-url] :as mission} (mget training :current-mission)]
       ;; todo styling for the toolbar elements
       [(div (when source
-              (a {:target "_blank"
+              (a {:style {:color cb-text-color}
+                  :target "_blank"
                   :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/" source)}
                 "Source")))
-       (b {:style "color:white"} "Mission Control")
+       (b {:style {:color cb-text-color}} "Mission Control")
        (div (when wiki-url
-              (a {:target "_blank"
+              (a {:style {:color cb-text-color}
+                  :target "_blank"
                   :href   wiki-url} "Help")))
        (mx-debug/panel-install)])))
 
@@ -47,8 +52,8 @@
                  :justify-content "top"
                  :background "red")}
     {:name :msn-stack}
-    (b {:style {:background :black
-                :color :white
+    (b {:style {:background :red
+                :color "#fee"
                 :width "96px"
                 :text-align :center
                 :padding "2px"
