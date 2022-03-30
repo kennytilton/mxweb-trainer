@@ -7,7 +7,7 @@ Matrix is the generic, point-reactive engine that began as Common Lisp [Cells](h
 
 Matrix manages even the most complex, asynchronous application state transparently and automatically, simply by watching application state usage at run-time. [MobX](https://mobx.js.org/README.html) is roughly comparable.
 
-The #1 use case for automatic state management is building GUI interfaces, so our Matrix trainer is also a trainer in using [mxWeb](https://github.com/kennytilton/matrix/tree/main/cljs/mxweb).
+The prime use case for automatic state management is building GUI interfaces, so our Matrix trainer is also a trainer in using [mxWeb](https://github.com/kennytilton/matrix/tree/main/cljs/mxweb).
 
 Matrix has native versions for both JS and CLJS. mxWeb stacks exist in varying degrees of completeness for:
 * JS + HTML/CSS;
