@@ -28,19 +28,19 @@
 (defn mission-control-bar []
   (div {:style (style/row-center
                  :background :red
-                 :width "100%"
                  :justify-content :space-around
                  :color cb-text-color
                  :padding "3px")}
     (let [training (fmu :training)
           {:keys [source wiki-url] :as mission} (mget training :current-mission)]
-      ;; todo styling for the toolbar elements
       [(div (when source
               (a {:style {:color cb-text-color}
                   :target "_blank"
-                  :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/" source)}
+                  :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/"
+                            source)}
                 "Source")))
-       (b {:style {:color cb-text-color}} "Mission Control")
+       (b {:style {:color cb-text-color}}
+         "Mission Control")
        (div (when wiki-url
               (a {:style {:color cb-text-color}
                   :target "_blank"
@@ -89,7 +89,9 @@
 (defn training-root []
   (div
     {:name  :training
-     :style (style/column-left :background :linen)}
+     :style (style/column-left
+              :width "100%"
+              :background :linen)}
     ;; todo routing
     {:missions           [(welcome/mission-factory)         ;; :trainer-welcome
                           (just/mission-factory)            ;; :just-html
@@ -103,7 +105,6 @@
                           ]
      :current-mission-id (cI #_ :just-html
                            #_ :dyno-kids
-                           ;;:not-just-css ;;
                            :callback-heaven
                            #_ :cells-intro)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
@@ -117,12 +118,6 @@
             :alt   "The Matrix logo, a cell culture Petri dish"
             :style "height:96px"}))
 
-    (defn row-top [& override-keyvals]
-      (style-string (merge {:display        :flex
-                            :flex-direction :row
-                            :align-items    :top
-                            :align-content  :top}
-                      (apply hash-map override-keyvals))))
     (div {:style (style/row-top)}
       (mission-stack)
       (mission-workspace))))

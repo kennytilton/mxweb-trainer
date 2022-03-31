@@ -29,6 +29,8 @@
         (str "display:flex"
           ";background:white"
           ";color:black"
+          ";font-family: \"Times New Roman\", Times, serif"
+          ";font-size: 1.5em"
           ";flex-direction:column"
           ";align-items:left"
           ";align-content:left"
