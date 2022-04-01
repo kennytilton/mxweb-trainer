@@ -53,7 +53,7 @@
           :href   "https://clojurians.slack.com"} "Clojurians Slack")
       ".")
     (p {:style "padding:0"}
-      "Select a mission by clicking its button on the left.")
+      "&xlarr; Select a mission by clicking its button.")
     (p {:style "padding:0"}
       "Each mission includes:")
     (ul {:style "padding:0;margin-top:0;margin-left:36px"}

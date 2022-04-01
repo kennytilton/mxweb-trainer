@@ -17,7 +17,7 @@
                  ";align-content:center"
                  ";justify-content:center"
                  ";padding:9px"
-                 ";background:pink")}
+                 ";background:white")}
     (span {:style "font-size:3em"}
       "Hello, Cells")
 

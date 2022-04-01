@@ -6,7 +6,7 @@
             [tiltontec.model.core
              :refer [matrix mx-par mget mget mset! mxu-find-name fmu fm! fmo] :as md]
             [tiltontec.mxweb.gen-macro
-             :refer-macros [audio img input figure p a span div button br]
+             :refer-macros [h3 audio img input figure p a span div button br]
              :as mxw]
             [tiltontec.mxweb.gen
              :refer [make-tag dom-tag evt-mx target-value]]
@@ -44,8 +44,9 @@
 
 (defn not-just-css []
   (div {:style (style/column-center
-                 :padding "6px"
-                 :background :linen)}
+                 :justify-content :top
+                 ;;:padding "6px"
+                 :background :white)}
     {:tick   (cI false :ephemeral? true)
      :ticker (let [jid (atom nil)]
                ;; todo extend mxWeb so we can specify not-to-be cleanups, perhaps by formula!
@@ -63,7 +64,7 @@
     ; Longer examples are in the .mechanism NS
 
     ; We start with the null case: just specifying a convential style string:
-    (p {:style "background:none; color:dark-gray; font-size:36px; line-height: 1.2em; padding:3px"}
+    (h3 {:style "color:dark-gray; font-size:36px; line-height: 1em;"}
       "CSS Unleashed")
 
     (mech/reactive-class-selection)

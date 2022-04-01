@@ -19,7 +19,8 @@
             [tiltontec.mxxhr.core
              :refer [make-xhr send-xhr send-unparsed-xhr xhr-send xhr-await xhr-status
                      xhr-status-key xhr-resolved xhr-error xhr-error? xhrfo synaptic-xhr synaptic-xhr-unparsed
-                     xhr-selection xhr-to-map xhr-name-to-map xhr-response]]))
+                     xhr-selection xhr-to-map xhr-name-to-map xhr-response]]
+            [mxweb-trainer.mission.m022-callback-heaven.helper :as helper]))
 
 ;;; -----------------------------------------------------------
 ;;; --- adverse events ----------------------------------------
@@ -28,34 +29,6 @@
   (str/replace s #"\s" ""))
 
 (def ae-by-brand "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:~(~a~)&limit=~d")
-
-;[:patient
-;   {:patientonsetage "62",
-;    :patientonsetageunit "801",
-;    :patientweight "66.67",
-;    :patientsex "2",
-;    :reaction
-;    [{:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Nausea",
-;      :reactionoutcome "1"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Chills",
-;      :reactionoutcome "2"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Abdominal pain",
-;      :reactionoutcome "2"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Headache",
-;      :reactionoutcome "2"}],
-;    :drug
-;    [{:drugstartdate "20130308",
-;      :drugstructuredosageunit "003",
-;      :drugstructuredosagenumb "20",
-;      :actiondrug "5",
-;      :medicinalproduct "JAKAFI",
-;      :drugcharacterization "1",
-;      :drugadministrationroute "048",
-;      :openfda xx]]
 
 (defn result-digest [r]
   (let [p (:patient r)]
@@ -66,90 +39,90 @@
      :drugs          (map :medicinalproduct (:drug p))
      }))
 
-(defn drug-name-to-lookup []
-  (div {:class "color-input"}
-    "Drug name: "
-    (input {:name      :drug-name
-            :style     {:margin-left "9px"
-                        :padding     "6px"}
-            :tag/type  "text"
-            :value     (cI "")
-            :autofocus true
-            #_#_:oninput
-                ;; enable this for continuous lookup.
-                ;; but then ^^ we should look at cancelling "in-flight" XHRs
-                (fn [e]
-                  (mset! (evt-mx e)
-                    :value (target-value e)))
-            :onchange  (fn [e]
-                         ;; we move the DOM target-value to the Matrix
-                         (mset! (evt-mx e) :value (target-value e)))}
-
-      ;; --- solution outline -----------------
-      ;; - create one custom property to "compute" an AJAX lookup
-      ;    ; - you can create /and/ send an XHR lookup of 5 max adverse events aspirin using
-      ;    ;     (make-xhr (pp/cl-format nil ae-by-brand
-      ;    ;                  (js/encodeURIComponent "aspirin") 5)
-      ;    ;        {:name "aspirin" :send? true})
-      ;    ; - that ^^ returns a reactive Matrix model object with one reactive property `response`, where
-      ;    ;   the actual response will be deposited via `mset!`, triggering dataflow to any dependents.
-      ;    ; - you should arrange for that lookup to be sent each time the :drug-name widget takes on a new :value
-      ;; - create a second custom property to hold the parse response once it is received
-      ;    ; -
-
-      {:ae-lookup                                           ;; tips:
-                    (cF (let [drug-name (mget me :value)]
-                          ;; (when (mget (mxu-find-class me "ae-autocheck") :on?)
-                          (when-not (str/blank? drug-name)
-                            #_(prn :ae-lookup-url (pp/cl-format nil ae-by-brand
-                                                    (js/encodeURIComponent drug-name) 5))
-                            (make-xhr (pp/cl-format nil ae-by-brand
-                                        (js/encodeURIComponent drug-name) 5)
-                              {:name drug-name :send? true}))))
-       :ae-response (cF+ [:obs
-                          ;; `fn-obs` expands to (fn [~'slot ~'me ~'new ~'old ~'c]...]...
-                          ;; so we can look around quite a bit, including the internals `cell` object
-                          ;; that mediates this slot of this instance.
-                          ;; We used this observer in anger while developing this exercise to sort out
-                          ;; the structure of the service responses.
-                          (fn-obs
-                            (when new
-                              (binding [*print-level* 4]
-                                (pp/pprint [:results (map result-digest (get-in new [:body :results]))]))))]
-                      ;; todo have mget insist on property existing, or make an mget! version
-                      (when-let [lookup (mget me :ae-lookup)]
-                        (xhr-response lookup)))})))
-
 (defn build-ae-viewer [result]
   (span {:style {:margin-bottom "1em"}}
-    (str/join ", " (:reactions result))))
+    (str/join ", " (take 10 (:reactions result)))))
+
+(defn drug-name-lookup []
+  ;; --- solution outline -----------------
+  ;; - create a DIV with one custom property to "compute" an AJAX lookup:
+  ;    ; - you can create /and/ send an XHR lookup of 5 max adverse events aspirin using
+  ;    ;     (make-xhr (pp/cl-format nil ae-by-brand
+  ;    ;                  (js/encodeURIComponent "aspirin") 5)
+  ;    ;        {:name "aspirin" :send? true})
+  ;    ; - that ^^ returns a reactive Matrix model object with one reactive property `response`, where
+  ;    ;   the actual response will be deposited via `mset!`, triggering dataflow to any dependents.
+  ;    ; - you should arrange for that lookup to be sent each time the :drug-name widget takes on a new :value
+  ;; - create a second custom property to hold the parse response once it is received
+  ;    ; -
+  (div {:style (style/column-center
+                 :max-width "400px")}
+    {:ae-lookup
+     ;; ----------------------
+     ;; --- Your code here ---
+     ;; ----------------------
+     ;;
+     ;; If the user enters a drug name, make a reactive proxy XHR which
+     ;; automatically sends a real XHR without waiting:
+     ;
+     ;    (make-xhr (pp/cl-format nil ae-by-brand
+     ;                         (js/encodeURIComponent DRUG-NAME) MAX-RESULT-COUNT)
+     ;            {:send? true))
+     ;
+     ;; You need to supply the all-caps parameters. I use 5 for the count. Take the drug
+     ;; name from the `value` property of input widget.
+     ;;
+     ;; That will create a reactive object with a `response` property that will start as
+     ;; nil and be populated asynchronously when the response comes back.
+     ;;
+     ;;
+     (cF (let [drug-name (mget (fmu :drug-name) :value)]
+           (when-not (str/blank? drug-name)
+             (make-xhr (pp/cl-format nil ae-by-brand
+                         (js/encodeURIComponent drug-name) 5)
+               {:send? true}))))}
+
+    ;; with our async lookup defined ^^^, we will reactively await our capture of response....
+    (if-let [ae-response (when-let [lookup (mget me :ae-lookup)]
+                           (xhr-response lookup))]
+      ;; ...before building any DIV content to display the results.
+      [(h3 {:content (cF (when ae-response
+                           (if (= 200 (:status ae-response))
+                             "Adverse Events"
+                             "No adverse events reported to FDA")))})
+       ;; ----------------------
+       ;; --- Your code here ---
+       ;; ----------------------
+       ;; emulate the h3 code ^^ to conditionally generate a DIV to minimally display
+       ;; the results of any successful lookup. We provide a display view generator below.
+       ;; -- Until the response is received, display a message such as "Searching...".
+       ;; -- ...but do not display that until the XHR has been sent!
+       ;; -- If the :status of the response is not 200, announce no AEs were found.
+       ;; -- If 200, display each AE in a column, using provided (build-ae-viewer AE) to
+       ;;    generate the view components. Include the OpenFDA disclaimer, which
+       ;;    can be retrieved from the response with `(get-in RESPONSE [:body :meta :disclaimer])`
+       ;;
+       ;; Some tips:
+       ;; - retrieve all adverse events with `(get-in RESPONSE [:body :results])`
+       ;; - generate an adverse event digest with fn `result-digest`. See code above.
+       ;; - render a digest with `(build-ae-viewer DIGEST)`
+       ;;
+       #_"Response if status == 200"
+       (when (= 200 (:status ae-response))
+         (div {:style (style/column-left)}
+           (i {:style {:margin-bottom "1em"}}
+             (str "DISCLAIMER: " (get-in ae-response [:body :meta :disclaimer])))
+           (mapv build-ae-viewer
+             (map result-digest (get-in ae-response [:body :results])))))]
+      (when (mget me :ae-lookup) ;; (not (str/blank? (mget (fmu :drug-name) :value)))
+        "Checking...checking..."))))
 
 (defn callback-heaven
   []
   (div {:style (style/column-center :background "#fff" :padding "9px" :gap "1em")}
-    (span {:style {:font-size "2em"}} "Bogus Adverse Event Lookup Tool")
-
-    (drug-name-to-lookup)
-
-    (div {:style (style/column-center
-                   :max-width "400px")}
-      (let [ae-response (mget (fmu :drug-name) :ae-response)]
-        [(h3 {:content (cF (when ae-response
-                             (if (= 200 (:status ae-response))
-                               "Adverse Events"
-                               "No adverse events reported to NIH")))})
-         ;;; --- your code here --------------------------------------
-         ;;; emulate the h3 code ^^ to conditionally generate DOM to minimally display
-         ;;; the results of any successful lookup. Some tips:
-         ;;; - retrieve all adverse events with `(get-in ae-response [:body :results])`
-         ;;; - extract an adverse event digest with fn `result-digest`.
-         (when ae-response
-           (div {:style (style/column-left)}
-             (i {:style {:margin-bottom "1em"}}
-               "Disclaimer: Do <i>not</i> let results scare you. They are misleading!")
-             (when (= 200 (:status ae-response))
-               (mapv build-ae-viewer
-                 (map result-digest (get-in ae-response [:body :results]))))))]))))
+    (span {:style {:font-size "2em"}} "OpenFDA Adverse Event Lookup")
+    (helper/drug-name-to-lookup)                            ;; just an input widget named :ae-lookup
+    (drug-name-lookup)))
 
 (defn mission-factory []
   {:id        :callback-heaven

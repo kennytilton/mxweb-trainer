@@ -44,11 +44,13 @@
 (defn dom-tree [mx]
   (if (string? mx)
     (span {:style   "background:white;padding:4px"
-           :content mx})
+           ;; a good noob exercise here would be to add an onclick handler that toggles
+           ;; an :excerpt? boolean and then make the :content formulaic and showing
+           ;; the full content if false.
+           :content (subs mx 0 42)})
     (div {:style (style/column-center :padding "6px"
                    :border "thin inset"
-                   :background "cyan"
-                   )}
+                   :background "cyan")}
       {:target mx}
       (span {:style   "padding:9px"
              :content (cF (str "" (or (mget mx :name)

@@ -73,10 +73,12 @@
       (mget (md/fasc :training me) :missions))))
 
 (defn- mission-workspace []
-  (div {:style (style/column-left :width "100%")}
+  (div {:style (style/column-left :width "100%" :height "100%")}
     (mission-control-bar)
     (div {:style (style/column-center
+                   :justify-content :top
                    :background "#ecfdfe"
+                   :height "100%"
                    :color "black")}
       {:name :msn-socket}
       (let [m (mget (md/fasc :training me) :current-mission)]
@@ -90,7 +92,8 @@
   (div
     {:name  :training
      :style (style/column-left
-              :width "100%"
+              :width "100vw"
+              :height "100vh"
               :background :linen)}
     ;; todo routing
     {:missions           [(welcome/mission-factory)         ;; :trainer-welcome
@@ -103,9 +106,7 @@
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           (multi-mx/mission-factory)        ;; :multi-mx
                           ]
-     :current-mission-id (cI #_ :just-html
-                           #_ :dyno-kids
-                           :callback-heaven
+     :current-mission-id (cI :not-just-css
                            #_ :cells-intro)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
@@ -113,12 +114,13 @@
 
     (div {:style (style/column-center
                    :width "100%"
+                   :height :min-content
                    :background "maroon")}
       (img {:src   "/images/mx-banner-slim-72.jpg"
             :alt   "The Matrix logo, a cell culture Petri dish"
             :style "height:96px"}))
 
-    (div {:style (style/row-top)}
+    (div {:style (style/row-top :height "100%")}
       (mission-stack)
       (mission-workspace))))
 
