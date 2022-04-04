@@ -71,11 +71,8 @@
      ;; That will create a reactive object with a `response` property that will start as
      ;; nil and be populated asynchronously when the response comes back.
      ;;
-     (cF (let [drug-name (mget (fmu :drug-name) :value)]
-           (when-not (str/blank? drug-name)
-             (make-xhr (pp/cl-format nil ae-by-brand
-                         (js/encodeURIComponent drug-name) 5)
-               {:send? true}))))}
+     nil ;; make the XHR here
+     }
 
     ;; our next DIV parameter is any children we want to define.
     ;; with our async lookup defined ^^^, we will reactively await a full chain of lookup events:
@@ -94,11 +91,11 @@
       ;; ...before building any DIV content to display the results.
       [(h3 {:content (cF (when ae-response
                            (if (= 200 (:status ae-response))
-                             "Adverse Events"
+                             "Adverse Events Found"
                              "No adverse events reported to FDA")))})
-       ;; ----------------------
-       ;; --- Your code here ---
-       ;; ----------------------
+       ;; -------------------------
+       ;; --- Your code here #2 ---
+       ;; -------------------------
        ;; emulate the h3 code ^^ to conditionally generate a DIV to minimally display
        ;; the results of any successful lookup. We provide a display view generator below.
        ;; -- Until the response is received, display a message such as "Searching...".
@@ -109,19 +106,17 @@
        ;;    can be retrieved from the response with `(get-in RESPONSE [:body :meta :disclaimer])`
        ;;
        ;; Some tips:
-       ;; - retrieve all adverse events with `(get-in RESPONSE [:body :results])`
-       ;; - generate an adverse event digest with fn `result-digest`. See code above.
+       ;; - if the ae-lookup property is nil, the XHR has not been sent. Don't say "searching" or anything.
+       ;; - the H3 component handles non-200 status, so just report 200s;
+       ;; - once we have a 200 response, retrieve all adverse events with `(get-in RESPONSE [:body :results])`
+       ;; - before listing results, show the OpenFDA disclaimer in italics: `(get-in RESPONSE [:body :meta :disclaimer])
+       ;; - generate an adverse event digest with function `result-digest`. See code above.
        ;; - render a digest with `(build-ae-viewer DIGEST)`
        ;;
-       #_"Response if status == 200"
-       (when (= 200 (:status ae-response))
-         (div {:style (style/column-left)}
-           (i {:style {:margin-bottom "1em"}}
-             (str "DISCLAIMER: " (get-in ae-response [:body :meta :disclaimer])))
-           (mapv build-ae-viewer
-             (map result-digest (get-in ae-response [:body :results])))))]
-      (when (mget me :ae-lookup) ;; (not (str/blank? (mget (fmu :drug-name) :value)))
-        "Checking...checking..."))))
+       (i "Your code here: Adverse events list if status == 200, else blank")
+
+       ]
+      (i "Your code here: Once a lookup has been generated, but before a response has been received, say busy or sth."))))
 
 (defn callback-heaven
   []

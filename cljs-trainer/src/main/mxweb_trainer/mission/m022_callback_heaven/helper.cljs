@@ -30,39 +30,41 @@
             :tag/type  "text"
             :value     (cI "")
             :autofocus true
+            :oninput (fn [e]
+                       (let [mx (evt-mx e)]
+                         (when-not (str/blank? (mget mx :value))
+                           (mset! mx :value nil))))
             :onchange  (fn [e]
-                         (prn :onchg-emx (evt-mx e))
-                         (prn :onch-target (.-target e))
-                         (this-as mxdom
-                           (prn :onchg-this-as mxdom (= mxdom (.-target e))))
-                         ;; we move the DOM target-value to the Matrix
                          (mset! (evt-mx e) :value (target-value e)))})))
 
 ;;; --- response subset ---------------------------------------------------
-;[:patient
-;   {:patientonsetage "62",
-;    :patientonsetageunit "801",
-;    :patientweight "66.67",
-;    :patientsex "2",
-;    :reaction
-;    [{:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Nausea",
-;      :reactionoutcome "1"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Chills",
-;      :reactionoutcome "2"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Abdominal pain",
-;      :reactionoutcome "2"}
-;     {:reactionmeddraversionpt "17.0",
-;      :reactionmeddrapt "Headache",
-;      :reactionoutcome "2"}],
-;    :drug
-;    [{:drugstartdate "20130308",
-;      :drugstructuredosageunit "003",
-;      :drugstructuredosagenumb "20",
-;      :actiondrug "5",
-;      :medicinalproduct "JAKAFI",
-;      :drugcharacterization "1",
-;      :drugadministrationroute "048",
-;      :openfda xx]]
+;;;
+;;; (first (get-in ae-response [:body :results]))
+;;; => [:patient
+    ;   {:patientonsetage "62",
+    ;    :patientonsetageunit "801",
+    ;    :patientweight "66.67",
+    ;    :patientsex "2",
+    ;    :reaction
+    ;    [{:reactionmeddraversionpt "17.0",
+    ;      :reactionmeddrapt "Nausea",
+    ;      :reactionoutcome "1"}
+    ;     {:reactionmeddraversionpt "17.0",
+    ;      :reactionmeddrapt "Chills",
+    ;      :reactionoutcome "2"}
+    ;     {:reactionmeddraversionpt "17.0",
+    ;      :reactionmeddrapt "Abdominal pain",
+    ;      :reactionoutcome "2"}
+    ;     {:reactionmeddraversionpt "17.0",
+    ;      :reactionmeddrapt "Headache",
+    ;      :reactionoutcome "2"}],
+    ;    :drug
+    ;    [{:drugstartdate "20130308",
+    ;      :drugstructuredosageunit "003",
+    ;      :drugstructuredosagenumb "20",
+    ;      :actiondrug "5",
+    ;      :medicinalproduct "JAKAFI",
+    ;      :drugcharacterization "1",
+    ;      :drugadministrationroute "048",
+    ;      :openfda xx]]
+    ;    ...etc etc ...................
