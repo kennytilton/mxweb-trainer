@@ -34,7 +34,7 @@
     (let [training (fmu :training)
           {:keys [source wiki-url] :as mission} (mget training :current-mission)]
       [(div (when source
-              (a {:style {:color cb-text-color}
+              (a {:style  {:color cb-text-color}
                   :target "_blank"
                   :href   (str "https://github.com/kennytilton/mxweb-trainer/blob/main/cljs-trainer/src/main/mxweb_trainer/mission/"
                             source)}
@@ -42,7 +42,7 @@
        (b {:style {:color cb-text-color}}
          "Mission Control")
        (div (when wiki-url
-              (a {:style {:color cb-text-color}
+              (a {:style  {:color cb-text-color}
                   :target "_blank"
                   :href   wiki-url} "Help")))
        (mx-debug/panel-install)])))
@@ -53,18 +53,22 @@
                  :background "red")}
     {:name :msn-stack}
     (b {:style {:background :red
-                :color "#fee"
-                :width "96px"
+                :color      "#fee"
+                :width      "96px"
                 :text-align :center
-                :padding "2px"
-                :margin "2px"}}
-        "Missions")
+                :padding    "2px"
+                :margin     "2px"}}
+      "Missions")
     (map (fn [m]
-           (button {:style   {:margin "9px"
-                              :width "96px"
-                              :border-radius "5px"
-                              :border "thin solid #f88"
-                              :background "#f44"}
+           (button {:style   (cF (make-css-inline me
+                                   :margin "9px"
+                                   :width "96px"
+                                   :border-radius "7px"
+                                   :border (cF (str "medium solid "
+                                                 (if (= (:id m) (mget (fmu :training (:tag @me)) :current-mission-id))
+                                                   "#fcc" "#f88")))
+                                   :padding "2px"
+                                   :background "#f44"))
                     :onclick (fn [e]
                                (let [trn (md/fasc :training (evt-mx e))]
                                  (mset! trn :current-mission-id
@@ -106,8 +110,7 @@
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           (multi-mx/mission-factory)        ;; :multi-mx
                           ]
-     :current-mission-id (cI :not-just-css
-                           #_ :cells-intro)                  ;;todo save in local storage
+     :current-mission-id (cI :callback-heaven)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}

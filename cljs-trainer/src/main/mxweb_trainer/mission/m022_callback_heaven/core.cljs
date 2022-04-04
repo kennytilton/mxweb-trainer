@@ -25,9 +25,6 @@
 ;;; -----------------------------------------------------------
 ;;; --- adverse events ----------------------------------------
 
-(defn de-whitespace [s]
-  (str/replace s #"\s" ""))
-
 (def ae-by-brand "https://api.fda.gov/drug/event.json?search=patient.drug.openfda.brand_name:~(~a~)&limit=~d")
 
 (defn result-digest [r]
@@ -46,21 +43,20 @@
 (defn drug-name-lookup []
   ;; --- solution outline -----------------
   ;; - create a DIV with one custom property to "compute" an AJAX lookup:
-  ;    ; - you can create /and/ send an XHR lookup of 5 max adverse events aspirin using
-  ;    ;     (make-xhr (pp/cl-format nil ae-by-brand
-  ;    ;                  (js/encodeURIComponent "aspirin") 5)
-  ;    ;        {:name "aspirin" :send? true})
+  ;;    you can create /and/ send an XHR lookup of 5 max adverse events aspirin using
+  (comment
+    (make-xhr (pp/cl-format nil ae-by-brand
+                (js/encodeURIComponent "aspirin") 5)
+      {:send? true}))
   ;    ; - that ^^ returns a reactive Matrix model object with one reactive property `response`, where
   ;    ;   the actual response will be deposited via `mset!`, triggering dataflow to any dependents.
-  ;    ; - you should arrange for that lookup to be sent each time the :drug-name widget takes on a new :value
-  ;; - create a second custom property to hold the parse response once it is received
-  ;    ; -
+  ;    ; - you should arrange for that lookup to be sent each time the :drug-name widget takes on a new, non-blank :value
   (div {:style (style/column-center
                  :max-width "400px")}
     {:ae-lookup
-     ;; ----------------------
-     ;; --- Your code here ---
-     ;; ----------------------
+     ;; -------------------------
+     ;; --- Your code here #1 ---
+     ;; -------------------------
      ;;
      ;; If the user enters a drug name, make a reactive proxy XHR which
      ;; automatically sends a real XHR without waiting:
@@ -75,14 +71,24 @@
      ;; That will create a reactive object with a `response` property that will start as
      ;; nil and be populated asynchronously when the response comes back.
      ;;
-     ;;
      (cF (let [drug-name (mget (fmu :drug-name) :value)]
            (when-not (str/blank? drug-name)
              (make-xhr (pp/cl-format nil ae-by-brand
                          (js/encodeURIComponent drug-name) 5)
                {:send? true}))))}
 
-    ;; with our async lookup defined ^^^, we will reactively await our capture of response....
+    ;; our next DIV parameter is any children we want to define.
+    ;; with our async lookup defined ^^^, we will reactively await a full chain of lookup events:
+    ;;  1. If the user has not entered a drug, do not yet show any result message;
+    ;;  2. Once they enter a drug name, and before we get a response, display "Checking for AEs" or sth;
+    ;;  3. Once we get a response:
+    ;;    a. If no AEs are found, say so
+    ;;    b. IF AEs are found, list them
+
+    ;; -------------------------
+    ;; --- Your code here #2 ---
+    ;; -------------------------
+
     (if-let [ae-response (when-let [lookup (mget me :ae-lookup)]
                            (xhr-response lookup))]
       ;; ...before building any DIV content to display the results.

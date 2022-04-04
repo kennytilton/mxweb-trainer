@@ -31,6 +31,10 @@
             :value     (cI "")
             :autofocus true
             :onchange  (fn [e]
+                         (prn :onchg-emx (evt-mx e))
+                         (prn :onch-target (.-target e))
+                         (this-as mxdom
+                           (prn :onchg-this-as mxdom (= mxdom (.-target e))))
                          ;; we move the DOM target-value to the Matrix
                          (mset! (evt-mx e) :value (target-value e)))})))
 
