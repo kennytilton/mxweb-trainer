@@ -79,19 +79,19 @@
       ; check the instructions for utilities you can use, or write your own tree navigator
       ; that searches by widget name.
       ;
-      (fn [me] nil))
+      )
 
     (target-toggle cb-vermillion "vermillion"
       ;; find the second child of `me``
-      (fn [me] nil))
+      )
     (target-toggle cb-yellow "yellow"
       ;; find the parent of `me`
-      (fn [me] nil))
+      )
     (target-toggle cb-bluish-green "bluish-green"
       ;; careful. We cannot just search by name, because other widgets earlier in
       ;; the search algorithm order have the same name! So we must look
       ;; for an additional distinguishing property.
-      (fn [me] nil))))
+      )))
 
 (defn no-islands
   ; GUI application elements are highly inter-dependent.

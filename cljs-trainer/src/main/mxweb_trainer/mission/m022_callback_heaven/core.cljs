@@ -107,7 +107,7 @@
        ;;
        ;; Some tips:
        ;; - if the ae-lookup property is nil, the XHR has not been sent. Don't say "searching" or anything.
-       ;; - the H3 component handles non-200 status, so just report 200s;
+       ;; - the H3 component handles non-200 status, so here we just report 200s;
        ;; - once we have a 200 response, retrieve all adverse events with `(get-in RESPONSE [:body :results])`
        ;; - before listing results, show the OpenFDA disclaimer in italics: `(get-in RESPONSE [:body :meta :disclaimer])
        ;; - generate an adverse event digest with function `result-digest`. See code above.

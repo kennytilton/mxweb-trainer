@@ -14,17 +14,17 @@
 
 (defn target-toggle [color color-name & [target-finder]]
   (button {:style   (str "min-width:2em;min-height:2em;margin:4px;border:outset;background:" color)
-           :onclick (cF (when target-finder
-                          (let [root (fmu :app-root)]
-                            (let [search-me (md/fget :me (mget root :data)
-                                              :must? true   ; throw an error if search fails
-                                              :inside? true)]
-                              (fn [event]
-                                (let [target (target-finder search-me)]
-                                  (if target
-                                    (md/mswap! target :tagged? not)
-                                    (do (prn :cannot-find-target-for!!!!! color-name :from search-me)
-                                        (js/alert (str "Cannot find target for " color-name))))))))))}))
+           :onclick (cF (fn [event]
+                          (let [root (fmu :app-root (evt-mx event))
+                                search-me (md/fget :me (mget root :data)
+                                            :must? true   ; throw an error if search fails
+                                            :inside? true)]
+                            (if target-finder
+                              (let [target (target-finder search-me)]
+                                (if target
+                                  (md/mswap! target :tagged? not)
+                                  (js/alert (str "Cannot find target for " color-name))))
+                              (js/alert (str "Your navigation code here to find " color-name))))))}))
 
 (defn mx-tree [spec]
   (let [[name color secret & kids] (if (vector? spec)
