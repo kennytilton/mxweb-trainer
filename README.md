@@ -9,9 +9,10 @@ Matrix manages even the most complex, asynchronous application state transparent
 
 The prime use case for automatic state management is building GUI interfaces, so our Matrix trainer is also a trainer in using [mxWeb](https://github.com/kennytilton/matrix/tree/main/cljs/mxweb).
 
-Matrix has native versions for both JS and CLJS. mxWeb stacks exist in varying degrees of completeness for:
+Matrix has native versions for both JS, CLJS, and ClojureDart (CLJD). mxWeb stacks exist in varying degrees of completeness for:
 * JS + HTML/CSS;
 * CLJS + HTML/CSS;
+* CLJD + Flutter;
 * CJLS + React web; and
 * CLJS + ReactNative.
 
