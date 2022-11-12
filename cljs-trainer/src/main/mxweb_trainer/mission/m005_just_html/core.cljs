@@ -39,6 +39,10 @@
     ;; -----------------------------
     ;; --- your code here ----------
     ;; -----------------------------
+    (span "Hi, Mom!")
+    (span {:style "color:red;font-size:2em"
+           :onclick (fn [e] (prn "onclick sees:" e)
+                      (its-just-html-click-handler e))} "Accomplish Mission")
     ;;
     ;; Stuck? Come visit @kennytilton in the #matrix channel of Clojurians
     ))
