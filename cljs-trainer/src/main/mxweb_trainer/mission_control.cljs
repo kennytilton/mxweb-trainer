@@ -110,7 +110,7 @@
                           (review-1/mission-factory)        ;; :dyno-kids-history
                           (multi-mx/mission-factory)        ;; :multi-mx
                           ]
-     :current-mission-id (cI :callback-heaven)                  ;;todo save in local storage
+     :current-mission-id (cI :trainer-welcome)                  ;;todo save in local storage
      :current-mission    (cF (let [mid (mget me :current-mission-id)]
                                (some (fn [m] (when (= mid (:id m)) m))
                                  (mget me :missions))))}
